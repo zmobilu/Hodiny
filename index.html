@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Spálňa Hodiny</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <style>
+        /* ZÁKLADNÝ DENNÝ REŽIM (Biely) */
+        body { 
+            margin: 0; padding: 0; background-color: #000; color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100vh; width: 100vw; overflow: hidden;
+            -webkit-user-select: none; user-select: none;
+            transition: color 1s ease-in-out; /* Plynulý prechod farby */
+        }
+
+        /* NOČNÝ REŽIM (Žltý) - od 20:00 do 06:00 */
+        body.night-mode {
+            color: #ffcc00;
+        }
+
+        #clock-container { display: flex; flex-direction: column; align-items: center; }
+
+        #time { 
+            font-size: 35vw; line-height: 0.8; letter-spacing: -2px; 
+            display: flex; align-items: baseline;
+        }
+        
+        .hours-part { font-weight: 500; } 
+        .minutes-part { font-weight: 200; margin-left: 15px; } 
+
+        .weather-section { 
+            margin-top: 5vh; display: flex; align-items: center; gap: 20px;
+            font-size: 10vw; font-weight: 300;
+        }
+        
+        /* Ikona počasia nasleduje farbu textu */
+        #weather-icon { transition: color 1s ease-in-out; }
+        body.night-mode #weather-icon { color: #ffcc00; }
+        body:not(.night-mode) #weather-icon { color: #ffffff; }
+
+    </style>
+</head>
+<body id="mainBody">
+
+    <div id="clock-container">
+        <div id="time">
+            <span id="h-part" class="hours-part">00</span>
+            <span id="m-part" class="minutes-part">00</span>
+        </div>
+
+        <div class="weather-section">
+            <i id="weather-icon" class="fas fa-sun"></i>
+            <span id="weather-temp">--°C</span>
+        </div>
+    </div>
+
+    <script>
+        // 1. AKTUALIZÁCIA ČASU A REŽIMU
+        function updateUI() {
+            const now = new Date();
+            const hour = now.getHours();
+            
+            // Nastavenie času
+            let hStr = String(hour).padStart(2, '0');
+            let mStr = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('h-part').textContent = hStr;
+            document.getElementById('m-part').textContent = mStr;
+
+            // Logika prepínania farieb (20:00 - 06:00)
+            const body = document.getElementById('mainBody');
+            if (hour >= 20 || hour < 6) {
+                if (!body.classList.contains('night-mode')) {
+                    body.classList.add('night-mode');
+                }
+            } else {
+                if (body.classList.contains('night-mode')) {
+                    body.classList.remove('night-mode');
+                }
+            }
+        }
+        setInterval(updateUI, 1000); 
+        updateUI();
+
+        // 2. AKTUALIZÁCIA POČASIA (Každých 6 hodín pre šetrenie batérie a dát)
+        async function updateWeather() {
+            try {
+                // Používame tvoju overenú lokalitu
+                const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current_weather=true&timezone=Europe%2FBratislava`);
+                const d = await r.json();
+                
+                document.getElementById('weather-temp').textContent = Math.round(d.current_weather.temperature) + '°C';
+                
+                const codes = { 0: 'fa-sun', 1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', 45: 'fa-smog', 51: 'fa-cloud-rain', 61: 'fa-cloud-showers-heavy', 71: 'fa-snowflake', 95: 'fa-bolt' };
+                const iconClass = codes[d.current_weather.weathercode] || 'fa-cloud';
+                document.getElementById('weather-icon').className = 'fas ' + iconClass;
+            } catch (e) {
+                console.error("Chyba počasia");
+            }
+        }
+
+        // Prvé načítanie a potom interval 6 hodín
+        updateWeather(); 
+        setInterval(updateWeather, 21600000); 
+
+    </script>
+</body>
+</html>

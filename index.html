@@ -24,10 +24,9 @@
         .red-digit { color: #eb0028 !important; } 
         
         .weather-section { display: flex; align-items: center; gap: 15px; }
-        #weather-temp { font-size: 8.5vw; font-weight: 300; } 
-        #weather-icon { font-size: 8.5vw; color: #ffcc00; }
+        #weather-temp-mini { font-size: 8.5vw; font-weight: 300; } 
+        #weather-icon-mini { font-size: 8.5vw; color: #ffcc00; }
 
-        /* Skryté prvky v rádio režime */
         .ss-only { display: none; }
 
         .buttons-section { flex: 1.1; display: grid; grid-template-columns: 1fr 1fr; 
@@ -44,49 +43,52 @@
         .white-logo { filter: brightness(0) invert(1); }
         .playing { border: 2px solid #fff !important; }
 
-        /* --- REŽIM ŠETRIČA (METEOSTANICA) --- */
+        /* --- REŽIM ŠETRIČA (OPTIMALIZOVANÝ PRE iPHONE 8) --- */
         body.screensaver-mode .buttons-section { display: none; }
         body.screensaver-mode .clock-section { 
-            flex: 1; border: none; padding: 20px;
+            flex: 1; border: none; padding: 0;
             display: grid; 
-            grid-template-columns: 1.4fr 0.8fr; 
-            grid-template-rows: 1fr 0.4fr;
-            gap: 10px;
+            grid-template-columns: 1.2fr 0.8fr; 
+            grid-template-rows: 1fr 0.45fr;
+            align-items: center;
         }
 
-        /* Hodiny vľavo hore */
+        /* Horný ľavý roh: Čas */
         body.screensaver-mode #time { 
             grid-column: 1; grid-row: 1;
-            font-size: 35vw; align-self: center; justify-self: center;
+            font-size: 28vw; margin: 0; justify-content: center;
         }
 
-        /* Dátum a mesiac vľavo dole */
+        /* Horný pravý roh: Ikona počasia */
+        body.screensaver-mode #weather-main-icon-container { 
+            grid-column: 2; grid-row: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .meteo-icon-large { font-size: 22vw; color: #ffcc00; }
+        .meteo-label-top { font-size: 3vw; text-transform: uppercase; color: #666; letter-spacing: 2px; }
+
+        /* Dolný ľavý roh: Dátum a Mesiac */
         body.screensaver-mode #date-block { 
             grid-column: 1; grid-row: 2;
-            display: flex; align-items: center; justify-content: center; gap: 30px;
-            border-top: 1px solid #222; padding-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 20px;
+            border-top: 1px solid #111; height: 100%;
         }
-        .ss-date { font-size: 10vw; font-weight: 300; color: #fff; }
-        .ss-moon { font-size: 8vw; color: #ddd; }
+        .ss-date { font-size: 9vw; font-weight: 300; }
+        .ss-moon { font-size: 7vw; color: #ddd; }
 
-        /* Pravý stĺpec s počasím */
-        body.screensaver-mode #weather-sidebar { 
-            grid-column: 2; grid-row: 1 / span 2;
-            display: flex; flex-direction: column; justify-content: space-around;
-            background: #080808; border-radius: 20px; padding: 15px; border: 1px solid #111;
+        /* Dolný pravý roh: Teploty (Vnútri / Vonku) */
+        body.screensaver-mode #weather-bottom-row { 
+            grid-column: 2; grid-row: 2;
+            display: flex; flex-direction: column; justify-content: center;
+            border-top: 1px solid #111; height: 100%; background: #050505;
         }
-
-        .meteo-box { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .meteo-label { font-size: 2.5vw; text-transform: uppercase; color: #666; margin-bottom: 5px; letter-spacing: 1px; }
-        .meteo-value { font-size: 8vw; font-weight: 300; }
-        .meteo-sub { font-size: 4vw; color: #aaa; font-weight: 200; }
-        .meteo-icon-large { font-size: 12vw; margin-bottom: 10px; }
-
-        #indoor-label { color: #87CEEB; } /* Interiér modrý */
-        #outdoor-label { color: #ffcc00; } /* Exteriér žltý */
+        .temp-row { display: flex; justify-content: space-around; align-items: center; width: 100%; }
+        .temp-item { text-align: center; }
+        .temp-val { font-size: 8vw; font-weight: 300; }
+        .temp-label { font-size: 2.2vw; text-transform: uppercase; color: #666; }
+        .temp-hum { font-size: 3vw; color: #888; }
 
         #spotify-links-container, .bt-mini-link { display: none !important; }
-        body:not(.screensaver-mode) #spotify-links-container.active { display: block !important; }
     </style>
 </head>
 <body id="mainBody">
@@ -94,41 +96,43 @@
     <audio id="audioPlayer" preload="none" playsinline></audio>
 
     <div class="clock-section">
-        <!-- Hodiny -->
+        <!-- Čas (Vždy viditeľný) -->
         <div id="time">
             <span id="h-part" class="hours-part">0</span>
             <span id="m-part" class="minutes-part">00</span>
         </div>
 
-        <!-- REŽIM RÁDIO: Jednoduché počasie -->
+        <!-- REŽIM RÁDIO: Mini počasie pod hodinami -->
         <div class="weather-section ss-hide" id="radio-weather">
             <i id="weather-icon-mini" class="fas fa-sun"></i>
             <span id="weather-temp-mini">--°C</span>
         </div>
 
-        <!-- REŽIM ŠETRIČ: Dátum a mesiac -->
+        <!-- REŽIM ŠETRIČ: Hlavná ikona predpovede -->
+        <div id="weather-main-icon-container" class="ss-only">
+            <i id="weather-icon-main" class="fas fa-cloud-sun meteo-icon-large"></i>
+            <div class="meteo-label-top">Predpoveď</div>
+        </div>
+
+        <!-- REŽIM ŠETRIČ: Dátum a Mesiac -->
         <div id="date-block" class="ss-only">
-            <span id="date-display" class="ss-date">2.5.</span>
+            <span id="date-display" class="ss-date">--.--.</span>
             <i id="moon-icon" class="fas fa-moon ss-moon"></i>
         </div>
 
-        <!-- REŽIM ŠETRIČ: Pravý panel meteostanice -->
-        <div id="weather-sidebar" class="ss-only">
-            <div class="meteo-box">
-                <i id="weather-icon-main" class="fas fa-cloud-sun meteo-icon-large" style="color: #ffcc00;"></i>
-                <div class="meteo-label">Predpoveď</div>
-            </div>
-
-            <div class="meteo-box">
-                <div class="meteo-label" id="indoor-label">Vnútri (Shelly)</div>
-                <div class="meteo-value" id="indoor-temp">--°C</div>
-                <div class="meteo-sub" id="indoor-hum">--% vlhkosť</div>
-            </div>
-
-            <div class="meteo-box">
-                <div class="meteo-label" id="outdoor-label">Vonku</div>
-                <div class="meteo-value" id="outdoor-temp">--°C</div>
-                <div class="meteo-sub" id="outdoor-hum">--% vlhkosť</div>
+        <!-- REŽIM ŠETRIČ: Spodný riadok s teplotami -->
+        <div id="weather-bottom-row" class="ss-only">
+            <div class="temp-row">
+                <div class="temp-item" style="color: #87CEEB;">
+                    <div class="temp-label">Vnútri</div>
+                    <div class="temp-val" id="indoor-temp">--°C</div>
+                    <div class="temp-hum" id="indoor-hum">--%</div>
+                </div>
+                <div class="temp-item" style="color: #ffcc00;">
+                    <div class="temp-label">Vonku</div>
+                    <div class="temp-val" id="outdoor-temp">--°C</div>
+                    <div class="temp-hum" id="outdoor-hum">--%</div>
+                </div>
             </div>
         </div>
     </div>
@@ -148,9 +152,7 @@
     </div>
 
     <script>
-    const audio = document.getElementById('audioPlayer');
-    const buttons = document.querySelectorAll('.btn');
-    const SHELLY_IP = '192.168.1.50'; // <--- TU DOPLŇ SVOJU IP
+    const SHELLY_IP = '192.168.1.50'; // <--- Tvoja IP
 
     function updateClock() {
         const now = new Date();
@@ -171,11 +173,9 @@
         const phase = ((date.getTime() - new_moon.getTime()) / 1000) % lp;
         const res = Math.floor(phase / (24 * 3600));
         let icon = "fa-moon";
-        if (res < 2) icon = "fa-circle"; // Nov
-        else if (res < 7) icon = "fa-moon"; // Dorastajúci kosák
-        else if (res < 10) icon = "fa-stopwatch-20"; // Prvá štvrť
+        if (res < 2) icon = "fa-circle"; 
         else if (res < 14) icon = "fa-circle-half-stroke"; 
-        else if (res < 17) icon = "fa-solid fa-circle"; // Spln
+        else if (res < 17) icon = "fa-solid fa-circle"; 
         document.getElementById('moon-icon').className = `fas ${icon} ss-moon`;
     }
 
@@ -188,7 +188,7 @@
             
             document.getElementById('weather-temp-mini').textContent = temp + '°C';
             document.getElementById('outdoor-temp').textContent = temp + '°C';
-            document.getElementById('outdoor-hum').textContent = hum + '% vlhkosť';
+            document.getElementById('outdoor-hum').textContent = hum + '%';
             
             const codes = { 0: 'fa-sun', 1: 'fa-cloud-sun', 3: 'fa-cloud', 61: 'fa-cloud-rain', 95: 'fa-bolt' };
             const iconClass = 'fas ' + (codes[d.current.weather_code] || 'fa-cloud');
@@ -203,21 +203,21 @@
             const r = await fetch(`http://${SHELLY_IP}/rpc/HTSensor.GetStatus`);
             const d = await r.json();
             document.getElementById('indoor-temp').textContent = Math.round(d.tC) + '°C';
-            document.getElementById('indoor-hum').textContent = Math.round(d.rh) + '% vlhkosť';
-        } catch (e) { console.log("Shelly offline"); }
+            document.getElementById('indoor-hum').textContent = Math.round(d.rh) + '%';
+        } catch (e) { }
     }
     updateIndoor(); setInterval(updateIndoor, 300000);
 
+    const audio = document.getElementById('audioPlayer');
     function playRadio(url, element, type) {
-        buttons.forEach(btn => btn.classList.remove('playing'));
+        document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
         audio.src = url; audio.play();
         element.classList.add('playing');
         resetIdleTimer();
     }
-
     function stopRadio() {
         audio.pause(); audio.src = "";
-        buttons.forEach(btn => btn.classList.remove('playing'));
+        document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
         resetIdleTimer();
     }
 

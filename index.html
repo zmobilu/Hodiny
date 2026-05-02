@@ -25,9 +25,11 @@
         .red-digit { color: #eb0028 !important; } 
         
         .weather-section { display: flex; align-items: center; gap: 15px; transition: all 0.5s ease; }
-        #date-display, #weather-temp { font-size: 8.5vw; font-weight: 300; } 
+        #weather-temp { font-size: 8.5vw; font-weight: 300; } 
         #weather-icon { font-size: 8.5vw; color: #ffcc00; }
-        #weather-humidity { font-size: 4vw; font-weight: 200; color: #aaa; margin-left: -5px; align-self: flex-end; padding-bottom: 1vw; }
+
+        /* Skryté prvky v základnom režime */
+        #date-display, #weather-humidity { display: none; }
 
         #spotify-links-container { display: none; margin-top: 15px; width: 90%; background: #0a0a0a; border-radius: 12px; padding: 20px 5px; }
         #spotify-links-container div { display: flex; justify-content: space-around; flex-wrap: wrap; gap: 25px; }
@@ -57,8 +59,12 @@
         body.screensaver-mode .buttons-section { display: none; }
         body.screensaver-mode .clock-section { flex: 1; border: none; justify-content: center; padding-top: 0; }
         body.screensaver-mode #time { font-size: 40vw; transition: font-size 0.5s ease; }
-        body.screensaver-mode #weather-temp, body.screensaver-mode #weather-icon, body.screensaver-mode #date-display { font-size: 10vw; }
-        body.screensaver-mode #weather-humidity { font-size: 5vw; }
+        
+        /* Zobrazenie a veľkosť v šetriči */
+        body.screensaver-mode #date-display { display: inline; font-size: 10vw; font-weight: 300; }
+        body.screensaver-mode #weather-temp, body.screensaver-mode #weather-icon { font-size: 10vw; }
+        body.screensaver-mode #weather-humidity { display: inline; font-size: 5vw; font-weight: 200; color: #aaa; margin-left: -5px; align-self: flex-end; padding-bottom: 1vw; }
+        
         body.screensaver-mode #spotify-links-container, body.screensaver-mode .bt-mini-link { display: none !important; }
     </style>
 </head>
@@ -78,6 +84,7 @@
             <span id="weather-humidity">--%</span>
         </div>
 
+        <!-- PREDPOVEĎ -->
         <div id="forecast-container" style="display: none; position: absolute; top: 15%; left: 5%; width: 45%; background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border-radius: 18px; border: 1px solid #333; padding: 15px; z-index: 100;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 12px;">
                 <span style="color: #ffcc00; font-weight: 700; font-size: 16px; text-transform: uppercase;">Predpoveď</span>
@@ -161,11 +168,10 @@
 
     async function updateWeather() {
         try {
-            // Použitie parametra 'current' pre získanie vlhkosti (relative_humidity_2m)
+            // Aktualizované API volanie s vlhkosťou
             const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current=temperature_2m,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava`);
             const d = await r.json();
             
-            // Teplota a vlhkosť
             document.getElementById('weather-temp').textContent = Math.round(d.current.temperature_2m) + '°C';
             document.getElementById('weather-humidity').textContent = Math.round(d.current.relative_humidity_2m) + '%';
             

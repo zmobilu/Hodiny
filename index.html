@@ -173,10 +173,11 @@
 		    	<i id="moon-icon" class="fas fa-circle ss-moon"></i>
     			<div class="ss-date-wrapper">
         			<span id="date-display" class="ss-date">--.--.</span>
-        			<div class="ss-day-container">
-            			<span id="day-display" class="ss-day">---</span>
-		            	<span id="holiday-display" class="ss-holiday"></span>
-        			</div>
+        				<div class="ss-day-container">
+    						<span id="day-display" class="ss-day">---</span>
+   					 		<!-- TENTO RIADOK TU MUSÍ BYŤ -->
+				    		<span id="holiday-display" class="ss-holiday"></span>
+						</div>
     			</div>
 			</div>
         </div>
@@ -261,32 +262,42 @@ const slovenskeSviatky = {
 };
 
     function updateClock() {
-        const now = new Date();
-		const d = now.getDate();
-    	const m = now.getMonth() + 1;
-    	const klic = `${d}.${m}.`; // Formát pre hľadanie v zozname
-		
-		// Základné zobrazenie času a dátumu
-        let h = String(now.getHours()).padStart(2, '0');
-        let m = String(now.getMinutes()).padStart(2, '0');
-        let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+    const now = new Date();
+    const d = now.getDate();
+    const m = now.getMonth() + 1;
+    const klic = `${d}.${m}.`; // Toto definuje kľúč pre hľadanie sviatku
 
-		document.getElementById('h-part').innerHTML = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
-    	document.getElementById('m-part').textContent = min;
-    	document.getElementById('date-display').textContent = klic;
-		           
-        // Meniny z premennej (stiahnuté z API)
-   		document.getElementById('day-display').textContent = dnesneMeno;
- 
-		// Kontrola a zobrazenie sviatku
-    	const holidayEl = document.getElementById('holiday-display');
-    	if (slovenskeSviatky[klic]) {
-        holidayEl.textContent = slovenskeSviatky[klic];
-        holidayEl.style.display = "block"; } 	
-		else {
-        holidayEl.textContent = "";
-        holidayEl.style.display = "none"; }
+    // 1. ČAS (HODINY A MINÚTY)
+    let h = String(now.getHours()).padStart(2, '0');
+    let min = String(now.getMinutes()).padStart(2, '0');
+    
+    // Červená číslica pre jednotku na začiatku
+    let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+    document.getElementById('h-part').innerHTML = h_display;
+    document.getElementById('m-part').textContent = min;
 
+    // 2. DÁTUM
+    document.getElementById('date-display').textContent = klic;
+
+    // 3. MENINY (Zobrazujeme meno z premennej dnesneMeno)
+    const dayDisplayEl = document.getElementById('day-display');
+    if (dayDisplayEl) {
+        dayDisplayEl.textContent = dnesneMeno;
+    }
+
+    // 4. SVIATOK (Tvoja nová logika)
+    const holidayEl = document.getElementById('holiday-display');
+    if (holidayEl) {
+        if (slovenskeSviatky[klic]) {
+            holidayEl.textContent = slovenskeSviatky[klic];
+            holidayEl.style.display = "block";
+        } else {
+            holidayEl.textContent = "";
+            holidayEl.style.display = "none";
+        }
+    }
+
+    // 5. FÁZA MESIACA
     updateMoonPhase(now);
 }
         updateMoonPhase(now);

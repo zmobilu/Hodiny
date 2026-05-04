@@ -263,47 +263,46 @@ const slovenskeSviatky = {
 };
 
     function updateClock() {
-    const now = new Date();
-    const d = now.getDate();
-    const m = now.getMonth() + 1;
-    const klic = `${d}.${m}.`; // Toto definuje kľúč pre hľadanie sviatku
+        const now = new Date();
+        const d = now.getDate();
+        const m = now.getMonth() + 1;
+        const klic = `${d}.${m}.`; 
 
-    // 1. ČAS (HODINY A MINÚTY)
-    let h = String(now.getHours()).padStart(2, '0');
-    let min = String(now.getMinutes()).padStart(2, '0');
-    
-    // Červená číslica pre jednotku na začiatku
-    let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
-    document.getElementById('h-part').innerHTML = h_display;
-    document.getElementById('m-part').textContent = min;
+        // 1. ČAS
+        let h = String(now.getHours()).padStart(2, '0');
+        let min = String(now.getMinutes()).padStart(2, '0');
+        let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+        
+        document.getElementById('h-part').innerHTML = h_display;
+        document.getElementById('m-part').textContent = min;
 
-    // 2. DÁTUM
-    document.getElementById('date-display').textContent = klic;
+        // 2. DÁTUM
+        document.getElementById('date-display').textContent = klic;
 
-    // 3. MENINY (Zobrazujeme meno z premennej dnesneMeno)
-    const dayDisplayEl = document.getElementById('day-display');
-    if (dayDisplayEl) {
-        dayDisplayEl.textContent = dnesneMeno;
-    }
-
-    // 4. SVIATOK (Tvoja nová logika)
-    const holidayEl = document.getElementById('holiday-display');
-    if (holidayEl) {
-        if (slovenskeSviatky[klic]) {
-            holidayEl.textContent = slovenskeSviatky[klic];
-            holidayEl.style.display = "block";
-        } else {
-            holidayEl.textContent = "";
-            holidayEl.style.display = "none";
+        // 3. MENINY
+        const dayDisplayEl = document.getElementById('day-display');
+        if (dayDisplayEl) {
+            dayDisplayEl.textContent = dnesneMeno;
         }
-    }
 
-    // 5. FÁZA MESIACA
-    updateMoonPhase(now);
-}
+        // 4. SVIATOK
+        const holidayEl = document.getElementById('holiday-display');
+        if (holidayEl) {
+            if (slovenskeSviatky[klic]) {
+                holidayEl.textContent = slovenskeSviatky[klic];
+                holidayEl.style.display = "block";
+            } else {
+                holidayEl.textContent = "";
+                holidayEl.style.display = "none";
+            }
+        }
+
+        // 5. FÁZA MESIACA
         updateMoonPhase(now);
-    }
-    setInterval(updateClock, 1000); updateClock();
+    } // TU KONČÍ FUNKCIA A NIČ VIAC ZA TOU ZÁTVORKOU NESMIE BYŤ
+
+    setInterval(updateClock, 1000); 
+    updateClock();
 
     function updateMoonPhase(date) {
         const lp = 2551443; const new_moon = new Date(1970, 0, 7, 20, 35, 0);

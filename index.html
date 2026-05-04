@@ -79,17 +79,33 @@
 		.ss-date-wrapper { display: flex; align-items: baseline; gap: 10px; }
 		.ss-date { font-size: 14vw; font-weight: 300; color: #fff; }
 
-		/* Meniny - Slovenské (vľavo dole, zelené) */
+		/* Meniny a Sviatok - Dvojriadkové zobrazenie vľavo */
+
+		.ss-day-container {
+    		display: flex;
+    		flex-direction: column; /* Texty pod sebou */
+    justify-content: center;
+    gap: 2px;
+}
+
 		.ss-day { 
-		    font-size: 4.5vw; 
-		    font-weight: 400; 
-		    color: #1db954; 
-		    text-transform: uppercase; 
-		    text-align: left; 
-		    line-height: 1.1; 
-		    max-width: 35vw; 
-		    white-space: normal; 
-		}
+    font-size: 4.5vw; 
+    font-weight: 400; 
+    color: #1db954; 
+    text-transform: uppercase; 
+    text-align: left; 
+    line-height: 1.0; 
+    white-space: nowrap; 
+}
+
+.ss-holiday {
+    font-size: 3vw; /* Menšie písmo pre sviatok */
+    font-weight: 300;
+    color: #ffd700; /* Zlatistá farba, aby sviatok vynikol */
+    text-transform: uppercase;
+    text-align: left;
+    letter-spacing: 1px;
+}
 		/* PRAVÁ STRANA - Počasie a Predpoveď */
 		.ss-right-col { 
     		display: flex; 
@@ -154,12 +170,15 @@
             </div>
 
             <div id="date-block" class="ss-only">
-                <i id="moon-icon" class="fas fa-circle ss-moon"></i>
-                <div class="ss-date-wrapper">
-                    <span id="date-display" class="ss-date">--.--.</span>
-                    <span id="day-display" class="ss-day">---</span>
-                </div>
-            </div>
+		    	<i id="moon-icon" class="fas fa-circle ss-moon"></i>
+    			<div class="ss-date-wrapper">
+        			<span id="date-display" class="ss-date">--.--.</span>
+        			<div class="ss-day-container">
+            			<span id="day-display" class="ss-day">---</span>
+		            	<span id="holiday-display" class="ss-holiday"></span>
+        			</div>
+    			</div>
+			</div>
         </div>
 
     	<div class="ss-right-col ss-only">
@@ -224,20 +243,52 @@
 
     updateNameday();
     setInterval(updateNameday, 3600000);
+		// Zoznam fixných slovenských sviatkov
+const slovenskeSviatky = {
+    "1.1.": "Deň vzniku SR",
+    "6.1.": "Traja králi",
+    "1.5.": "Sviatok práce",
+    "8.5.": "Deň víťazstva",
+    "5.7.": "Cyril a Metod",
+    "29.8.": "Výročie SNP",
+    "1.9.": "Deň Ústavy SR",
+    "15.9.": "Sedembolestná P. Mária",
+    "1.11.": "Všetkých svätých",
+    "17.11.": "Boj za slobodu",
+    "24.12.": "Štedrý deň",
+    "25.12.": "1. sviatok vianočný",
+    "26.12.": "2. sviatok vianočný"
+};
 
     function updateClock() {
         const now = new Date();
+		const d = now.getDate();
+    	const m = now.getMonth() + 1;
+    	const klic = `${d}.${m}.`; // Formát pre hľadanie v zozname
+		
+		// Základné zobrazenie času a dátumu
         let h = String(now.getHours()).padStart(2, '0');
         let m = String(now.getMinutes()).padStart(2, '0');
         let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
-        
-        document.getElementById('h-part').innerHTML = h_display;
-        document.getElementById('m-part').textContent = m;
-        document.getElementById('date-display').textContent = `${now.getDate()}.${now.getMonth() + 1}.`;
-        
-        // Zobrazíme meno uložené v premennej
-        document.getElementById('day-display').textContent = dnesneMeno;
-        
+
+		document.getElementById('h-part').innerHTML = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+    	document.getElementById('m-part').textContent = min;
+    	document.getElementById('date-display').textContent = klic;
+		           
+        // Meniny z premennej (stiahnuté z API)
+   		document.getElementById('day-display').textContent = dnesneMeno;
+ 
+		// Kontrola a zobrazenie sviatku
+    	const holidayEl = document.getElementById('holiday-display');
+    	if (slovenskeSviatky[klic]) {
+        holidayEl.textContent = slovenskeSviatky[klic];
+        holidayEl.style.display = "block"; } 	
+		else {
+        holidayEl.textContent = "";
+        holidayEl.style.display = "none"; }
+
+    updateMoonPhase(now);
+}
         updateMoonPhase(now);
     }
     setInterval(updateClock, 1000); updateClock();

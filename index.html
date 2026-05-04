@@ -47,7 +47,6 @@
 
         body.screensaver-mode .clock-section { flex: 1; border: none; display: grid; grid-template-columns: 1.3fr 0.7fr; align-items: stretch; }
 
-        /* Ľavá strana šetriča (Hodiny a dátum) */
         .ss-left-col { display: flex; flex-direction: column; justify-content: center; align-items: center; border-right: 1px solid #1a1a1a; padding-top: 4vh; }
         body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-bottom: 0vh; }
         
@@ -57,24 +56,21 @@
         .ss-date { font-size: 14vw; font-weight: 300; color: #fff; }
         .ss-day { font-size: 10vw; font-weight: 200; color: #aaa; text-transform: uppercase; }
 
-        /* PRAVÝ STĹPEC - optimalizácia pre iPhone 8 */
-		.ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; /* Rovnomerné rozloženie na výšku */ align-items: center; background: #000; padding: 1vh 0; }
+		.ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; align-items: center; background: #000; padding: 1vh 0; }
         
         .current-weather-group { text-align: center; }
         .meteo-icon-large { font-size: 15vw; margin-bottom: 5px; }
-		/* RIADOK S POCITOM A VLHKOSŤOU */
-		.sub-info-row { display: flex; justify-content: center; gap: 15px; /* Väčšia medzera medzi údajmi */ width: 100%; transform: scaleX(1.2) scaleY(0.8); /* Menej agresívne roztiahnutie */ transform-origin: center; margin-top: -2px; }
+		.sub-info-row { display: flex; justify-content: center; gap: 12px; width: 100%; transform: scaleX(1.2) scaleY(0.8); transform-origin: center; margin-top: -2px; }
         .temp-val { font-size: 14vw; font-weight: 300; line-height: 0.9; color: #fff; }
-		.hum-val { font-size: 4.5vw; /* Mierne menšie písmo */ font-weight: 200; color: #aaa; letter-spacing: 1px; opacity: 0.8; white-space: nowrap; }
-	    margin-bottom: 10px; /* Medzera pred deliacou čiarou */ display: block; transform: scaleX(1.4) scaleY(0.7); /* Kľúčové nastavenie: Široké a nízke */
-	    letter-spacing: 2px; /* Ešte viac ju opticky rozšíri */ opacity: 0.8; }
+        
+        /* OPRAVENÁ TRIEDA hum-val (spojená a vyčistená) */
+		.hum-val { font-size: 4.5vw; font-weight: 200; color: #aaa; letter-spacing: 1px; opacity: 0.8; white-space: nowrap; }
 
-        /* PREDPOVEĎ - nútený riadok */
-        #mini-forecast-strip { display: flex; flex-direction: row !important; /* Nasilu vedľa seba */ justify-content: space-around; width: 100%; border-top: 1px solid #222; padding-top: 1vh; margin-bottom: 1vh; }
-        .mini-item { display: flex; flex-direction: column; align-items: center; min-width: 45%; /* Aby sa zmestili dve vedľa seba */ }
+        #mini-forecast-strip { display: flex; flex-direction: row !important; flex-wrap: nowrap; justify-content: space-around; width: 100%; border-top: 1px solid #222; padding-top: 1vh; margin-top: auto; }
+        .mini-item { display: flex; flex-direction: column; align-items: center; width: 48%; }
         .mini-day { font-size: 2.5vw; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
         .mini-icon { font-size: 6vw; }
-        .mini-temp { font-size: 3.8vw; font-weight: 300; color: #fff; }
+        .mini-temp { font-size: 3.5vw; font-weight: 300; color: #fff; white-space: nowrap; }
     </style>
 </head>
 <body id="mainBody">
@@ -111,32 +107,31 @@
             </div>
         </div>
 
-	<div class="ss-right-col ss-only">
-	    <div class="current-weather-group">
-        	<i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
-        	<div class="temp-val" id="outdoor-temp">--°C</div>
-        
-        	<!-- OPRAVENÝ RIADOK -->
-        	<div class="sub-info-row">
-            	<span id="apparent-temp" class="hum-val">--°</span>
-            	<span id="outdoor-hum" class="hum-val">--%</span>
+    	<div class="ss-right-col ss-only">
+    	    <div class="current-weather-group">
+            	<i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
+            	<div class="temp-val" id="outdoor-temp">--°C</div>
+            
+            	<div class="sub-info-row">
+                	<span id="apparent-temp" class="hum-val">--°</span>
+                	<span id="outdoor-hum" class="hum-val">--%</span>
+            	</div>
+        	</div>
+    
+        	<div id="mini-forecast-strip">
+            	<div class="mini-item">
+                	<span id="fc0-day" class="mini-day">Dnes</span>
+                	<i id="fc0-icon" class="fas fa-cloud mini-icon"></i>
+            	    <span id="fc0-temp" class="mini-temp">-- / --</span>
+        	    </div>
+    	        <div class="mini-item">
+                	<span id="fc1-day" class="mini-day">Zajtra</span>
+                	<i id="fc1-icon" class="fas fa-cloud mini-icon"></i>
+                	<span id="fc1-temp" class="mini-temp">-- / --</span>
+            	</div>
         	</div>
     	</div>
-
-    	<div id="mini-forecast-strip">
-        	<div class="mini-item">
-            	<span id="fc0-day" class="mini-day">Dnes</span>
-            	<i id="fc0-icon" class="fas fa-cloud mini-icon"></i>
-        	    <span id="fc0-temp" class="mini-temp">-- / --</span>
-    	    </div>
-	        <div class="mini-item">
-            	<span id="fc1-day" class="mini-day">Zajtra</span>
-            	<i id="fc1-icon" class="fas fa-cloud mini-icon"></i>
-            	<span id="fc1-temp" class="mini-temp">-- / --</span>
-        	</div>
-    	</div>
-	</div>
-</div>
+    </div>
 
     <div class="buttons-section">
         <button onclick="stopRadio()" class="btn vypni"><i class="fa-solid fa-power-off"></i></button>
@@ -149,24 +144,16 @@
     <script>
     const VOLUME_MAP = { 'slovensko': 0.4, 'fun': 1.0, 'rock': 0.5 };
     const WEATHER_CODES = { 0: 'fa-sun', 1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', 45: 'fa-smog', 48: 'fa-smog', 51: 'fa-cloud-rain', 61: 'fa-cloud-showers-heavy', 71: 'fa-snowflake', 95: 'fa-bolt' };
-	const WEATHER_COLORS = { 
-	0: '#ffcc00', // Slnko - žltá
-    1: '#ffdb58', // Skoro jasno - svetložltá
-    2: '#aaa',    // Polooblačno - sivastá
-    3: '#888',    // Zamračené - sivá
-    45: '#777',   // Hmla - tmavosivá
-    51: '#4dabff',// Mrholenie - svetlomodrá
-    61: '#007bff',// Dážď - modrá
-    71: '#fff',   // Sneh - biela
-    95: '#ffeb3b' // Búrka - jasná žltá
-	};
+	const WEATHER_COLORS = { 0: '#ffcc00', 1: '#ffdb58', 2: '#aaa', 3: '#888', 45: '#777', 51: '#4dabff', 61: '#007bff', 71: '#fff', 95: '#ffeb3b' };
+	
 	function getTempColor(t) {
-    	if (t < 0) return '#00bfff';    // Mrazivo (jasná modrá)
-    	if (t < 10) return '#87CEEB';   // Chladno (svetlomodrá)
-    	if (t < 22) return '#98FB98';   // Príjemne (jarná zelená)
-    	if (t < 28) return '#ffa500';   // Teplejšie (oranžová)
-    	return '#ff4500';                // Horúco (červená)
+    	if (t < 0) return '#00bfff';
+    	if (t < 10) return '#87CEEB';
+    	if (t < 22) return '#98FB98';
+    	if (t < 28) return '#ffa500';
+    	return '#ff4500';
 	}
+
     function updateClock() {
         const now = new Date();
         const daysShort = ['Ned', 'Pon', 'Uto', 'Str', 'Štv', 'Pia', 'Sob'];
@@ -190,59 +177,52 @@
     }
 
     async function updateWeather() {
-    try {
-        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava`);
-        const d = await r.json();
-        
-        const rawTemp = d.current.temperature_2m;
-        const rawApparent = d.current.apparent_temperature; 
-        const currentTemp = Math.round(rawTemp) + '°C';
-        const currentHum = Math.round(d.current.relative_humidity_2m) + '%';
-        const currentCode = d.current.weather_code;
-        
-        const tColor = getTempColor(rawTemp);
-        const appColor = getTempColor(rawApparent);
-
-        // 1. Rádio režim
-        document.getElementById('weather-temp-mini').textContent = currentTemp;
-        document.getElementById('weather-temp-mini').style.color = tColor;
-
-        // 2. Šetrič - Hlavná teplota
-        const outdoorTemp = document.getElementById('outdoor-temp');
-        outdoorTemp.textContent = currentTemp;
-        outdoorTemp.style.color = tColor;
-
-        // 3. Pocitová teplota a vlhkosť - OPRAVENÝ ZÁPIS
-        const appTempEl = document.getElementById('apparent-temp');
-        appTempEl.textContent = Math.round(rawApparent) + '°';
-        appTempEl.style.color = appColor; 
-
-        document.getElementById('outdoor-hum').textContent = currentHum;
-
-        // 4. Ikona počasia
-        const mainIconEl = document.getElementById('weather-icon-main');
-        mainIconEl.className = 'fas ' + (WEATHER_CODES[currentCode] || 'fa-cloud') + ' meteo-icon-large';
-        mainIconEl.style.color = WEATHER_COLORS[currentCode] || '#aaa';
-
-        // 5. Predpoveď
-        for (let i = 0; i <= 1; i++) {
-            const dayName = (i === 0) ? 'Dnes' : 'Zajtra';
-            const code = d.daily.weather_code[i];
-            const max = d.daily.temperature_2m_max[i];
-            const min = Math.round(d.daily.temperature_2m_min[i]);
+        try {
+            const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava`);
+            const d = await r.json();
             
-            document.getElementById(`fc${i}-day`).textContent = dayName;
-            document.getElementById(`fc${i}-temp`).innerHTML = `<span style="color:${getTempColor(max)}">${Math.round(max)}°</span> <span style="color:#aaa; font-size:0.8em">/ ${min}°</span>`;
+            const rawTemp = d.current.temperature_2m;
+            const rawApparent = d.current.apparent_temperature; 
+            const currentTemp = Math.round(rawTemp) + '°C';
+            const currentHum = Math.round(d.current.relative_humidity_2m) + '%';
+            const currentCode = d.current.weather_code;
             
-            const iconEl = document.getElementById(`fc${i}-icon`);
-            iconEl.className = 'fas ' + (WEATHER_CODES[code] || 'fa-cloud') + ' mini-icon';
-            iconEl.style.color = WEATHER_COLORS[code] || '#aaa';
-        }
-    } catch (e) {
-        console.log("Chyba počasia:", e);
+            const tColor = getTempColor(rawTemp);
+            const appColor = getTempColor(rawApparent);
+
+            document.getElementById('weather-temp-mini').textContent = currentTemp;
+            document.getElementById('weather-temp-mini').style.color = tColor;
+
+            const outdoorTemp = document.getElementById('outdoor-temp');
+            outdoorTemp.textContent = currentTemp;
+            outdoorTemp.style.color = tColor;
+
+            const appTempEl = document.getElementById('apparent-temp');
+            appTempEl.textContent = Math.round(rawApparent) + '°';
+            appTempEl.style.color = appColor; 
+
+            document.getElementById('outdoor-hum').textContent = currentHum;
+
+            const mainIconEl = document.getElementById('weather-icon-main');
+            mainIconEl.className = 'fas ' + (WEATHER_CODES[currentCode] || 'fa-cloud') + ' meteo-icon-large';
+            mainIconEl.style.color = WEATHER_COLORS[currentCode] || '#aaa';
+
+            for (let i = 0; i <= 1; i++) {
+                const dayName = (i === 0) ? 'Dnes' : 'Zajtra';
+                const code = d.daily.weather_code[i];
+                const max = d.daily.temperature_2m_max[i];
+                const min = Math.round(d.daily.temperature_2m_min[i]);
+                
+                document.getElementById(`fc${i}-day`).textContent = dayName;
+                document.getElementById(`fc${i}-temp`).innerHTML = `<span style="color:${getTempColor(max)}">${Math.round(max)}°</span> <span style="color:#aaa; font-size:0.8em">/ ${min}°</span>`;
+                
+                const iconEl = document.getElementById(`fc${i}-icon`);
+                iconEl.className = 'fas ' + (WEATHER_CODES[code] || 'fa-cloud') + ' mini-icon';
+                iconEl.style.color = WEATHER_COLORS[code] || '#aaa';
+            }
+        } catch (e) { console.log("Chyba počasia:", e); }
     }
-}
-    updateWeather(); setInterval(updateWeather, 600000); // Obnova každých 10 min
+    updateWeather(); setInterval(updateWeather, 600000);
 
     const audio = document.getElementById('audioPlayer');
     function playRadio(url, element, type) {

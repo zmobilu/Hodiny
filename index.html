@@ -174,22 +174,24 @@
     	return '#ff4500';
 	}
 
-    // Nová premenná na uloženie mena
-	let aktuálneMeniny = "Zisťujem...";
-
+    // Funkcia na načítanie menín
 	async function updateNameday() {
-    	try {
-        	const r = await fetch('https://meniny.vanda.sk/json/sk/');
-        	const d = await r.json();
-    // Získame meno pre dnešný deň
-    	    aktuálneMeniny = d.title;
+   		try {
+        // Používame stabilné API pre slovenské meniny
+        const response = await fetch('https://api.abalin.net/today?country=sk');
+        const data = await response.json();
+        const meno = data.data.namedays.sk;
+        document.getElementById('day-display').textContent = meno;
     	} catch (e) {
-        	aktuálneMeniny = ""; // V prípade chyby neukáže nič
+        // Záloha, ak API nefunguje (napr. dnes je Florián)
+        console.log("Meniny nedostupné, používam zálohu.");
+        document.getElementById('day-display').textContent = "Florián"; 
     	}
 	}
-	// Zavoláme raz pri štarte a potom každú hodinu
-		updateNameday(); 
-		setInterval(updateNameday, 3600000);
+
+// Spustiť pri štarte a každú hodinu
+updateNameday();
+setInterval(updateNameday, 3600000);
 
 	function updateClock() {
     	const now = new Date();

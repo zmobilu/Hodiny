@@ -47,27 +47,32 @@
 
         body.screensaver-mode .clock-section { flex: 1; border: none; display: grid; grid-template-columns: 1.3fr 0.7fr; align-items: stretch; }
 
-        /* ĽAVÁ STRANA - zmena z center na space-between pre lepšie rozloženie */
+        /* ĽAVÁ STRANA - Hodiny a Dátum */
 		.ss-left-col { 
     		display: flex; 
-    		flex-direction: column; 
-    		justify-content: space-between !important; /* Rozloží čas hore a dátum dole */
-    		align-items: center; 
-    		border-right: 1px solid #1a1a1a; 
-    		padding: 4vh 0; /* Pridá rovnomerné odsadenie zhora aj zdola */
+		    flex-direction: column; 
+		    justify-content: flex-start !important; /* Prvky radíme odhora */
+	    	align-items: center; 
+		    border-right: 1px solid #1a1a1a; 
+		    padding: 0; /* Padding riešime cez marginy pre presnosť */
 		}
-        body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-bottom: 0vh; }
+       body.screensaver-mode #time { 
+    		font-size: 32vw; 
+    		transform: scaleY(1.30); 
+		    letter-spacing: -1vw; 
+		    margin-top: 8vh; /* Toto stiahne hodiny od horného okraja */
+		}
         
        /* Úprava bloku s dátumom - odstránený veľký margin-top */
 		#date-block { 
     		display: flex; 
     		align-items: center; 
     		justify-content: flex-start; 
-    		width: 90%; 
-    		gap: 15px; 
-    		margin-top: 0; /* Space-between sa postará o polohu */
+		    width: 90%; 
+		    gap: 15px; 
+    		margin-top: auto; /* KĽÚČOVÉ: Odtlačí dátum úplne na spodok stĺpca */
+		    margin-bottom: 3.5vh; /* Zarovnanie spodku s pravou stranou */
     		padding-left: 4vw; 
-    		margin-bottom: 1vh; /* Jemné odsadenie od úplného spodku */
 		}
 
 		.ss-moon { font-size: 8vw; color: #333; } 
@@ -85,17 +90,20 @@
 		    max-width: 35vw; 
 		    white-space: normal; 
 		}
-		/* PRAVÁ STRANA - jemné doladenie výšky */
+		/* PRAVÁ STRANA - Počasie a Predpoveď */
 		.ss-right-col { 
- 		   display: flex; 
- 		   flex-direction: column; 
-		    justify-content: space-between !important; 
-		    align-items: center; 
-		    background: #000; 
-		    padding: 4vh 0; /* Zjednotené s ľavou stranou pre symetriu */
+    		display: flex; 
+    		flex-direction: column; 
+    		justify-content: space-between !important; 
+    		align-items: center; 
+    		background: #000; 
+    		padding: 0; /* Padding riešime cez marginy */
 		}
         
-        .current-weather-group { text-align: center; }
+        .current-weather-group { 
+    		margin-top: 4vh; /* Zarovnáme ikonu približne s hodinami */
+    		text-align: center; 
+		}
         .meteo-icon-large { font-size: 15vw; margin-bottom: 5px; }
         .sub-info-row { display: flex; justify-content: center; gap: 14px; width: 100%; transform: scaleX(1.2) scaleY(0.8); transform-origin: center; margin-top: -2px; }
         .temp-val { font-size: 14vw; font-weight: 300; line-height: 0.9; color: #fff; }
@@ -105,15 +113,14 @@
 
         /* PREDPOVEĎ - zodvihnutie o cca 2vh-3vh podľa zadania */
 		#mini-forecast-strip { 
- 		   	display: flex; 
- 		   	flex-direction: row !important; 
-		   	flex-wrap: nowrap; 
-		   	justify-content: space-around; 
-		   	width: 100%; 
-   			border-top: 1px solid #222; 
+    		display: flex; 
+    		flex-direction: row !important; 
+    		flex-wrap: nowrap; 
+    		justify-content: space-around; 
+    		width: 100%; 
+    		border-top: 1px solid #222; 
     		padding-top: 1vh; 
-    		margin-top: auto; 
-    		margin-bottom: 2.5vh; /* Toto zodvihne predpoveď kúsok vyššie */
+    		margin-bottom: 3.5vh; /* Zjednotená výška spodného riadku */
 		}
         .mini-item { display: flex; flex-direction: column; align-items: center; width: 48%; }
         .mini-day { font-size: 2.5vw; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }

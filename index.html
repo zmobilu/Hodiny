@@ -113,16 +113,19 @@
 
         /* PREDPOVEĎ - zodvihnutie o cca 2vh-3vh podľa zadania */
 		#mini-forecast-strip { 
-    		display: flex; 
-    		flex-direction: row !important; 
+   			display: flex; 
+	    	flex-direction: row !important; 
     		flex-wrap: nowrap; 
-    		justify-content: space-around; 
+	    	justify-content: space-around; 
     		width: 100%; 
     		border-top: 1px solid #222; 
-    		padding-top: 1vh; 
-    		margin-bottom: 3.5vh; /* Zjednotená výška spodného riadku */
+    		/* Kombinovaný padding: hore 1vh, boky 15px, dole 0 */
+    		padding: 1vh 15px 0 15px; 
+    		margin-bottom: 3.5vh; 
+    		/* Toto zabezpečí, že 100% šírka ostane 100% aj s paddingom */
+    		box-sizing: border-box; 
 		}
-        .mini-item { display: flex; flex-direction: column; align-items: center; width: 48%; }
+        .mini-item { display: flex; flex-direction: column; align-items: center; width: 120px; /* Fixná šírka, ktorá zaručí, že sa vedľa seba zmestia */}
         .mini-day { font-size: 1.8vw; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
         .mini-icon { font-size: 6vw; }
         .mini-temp { font-size: 4.5vw; font-weight: 300; color: #fff; white-space: nowrap; }

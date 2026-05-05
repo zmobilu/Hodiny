@@ -127,22 +127,19 @@
         /* TU SI ZVÄČŠI FONT PODĽA POTREBY */
 		.hum-val { font-size: 6.5vw; /* Zväčšené z 4.5vw */ font-weight: 200; color: #aaa; letter-spacing: 1px; opacity: 0.8; white-space: nowrap; }
 
-        /* PREDPOVEĎ - výrazné zväčšenie */
+        /* PREDPOVEĎ - Odstránenie textov a MAXI ikony */
 .mini-day { 
-    font-size: 3.8vw; /* Väčší nápis Dnes/Zajtra */
-    color: #aaa; 
-    text-transform: uppercase; 
-    margin-bottom: 5px;
+    display: none; /* Úplne schová nápisy Dnes/Zajtra */
 }
 
 .mini-icon { 
-    font-size: 12vw !important; /* Obrovská ikona pre viditeľnosť */
-    margin: 10px 0; 
+    font-size: 16vw !important; /* Ešte väčšie než predtým */
+    margin: 5px 0;
 }
 
 .mini-temp { 
-    font-size: 6vw; /* Poriadne čitateľná teplota */
-    font-weight: 400; 
+    font-size: 8vw; /* Poriadne hrubé a veľké čísla */
+    font-weight: 500; 
     color: #fff; 
 }
 
@@ -150,10 +147,18 @@
     display: flex; 
     flex-direction: row !important; 
     justify-content: space-around; 
+    align-items: flex-end; /* Zarovná ikony k spodku */
     width: 100%; 
     border-top: 1px solid #222; 
-    padding-top: 2vh; 
-    margin-bottom: 3vh; /* Viac miesta od spodku */
+    padding-top: 1vh; 
+    margin-bottom: 2vh; 
+}
+
+.mini-item { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 45%; 
 }
     </style>
 </head>

@@ -33,7 +33,7 @@
         .buttons-section { flex: 1.1; display: grid; grid-template-columns: 1fr 1fr; 
             grid-template-rows: 0.7fr 1fr 1fr; gap: 8px; padding: 10px; background: #050505; }
         .btn { display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border: none; background: #151515; color: white; border-radius: 18px; cursor: pointer; }
+            border: none; background: #151515; color: white; border-radius: 18px; cursor: pointer; position: relative; overflow: hidden; /* Toto ochráni mriežku pred akýmkoľvek veľkým obrázkom */ }
         .vypni { background-color: #333; grid-column: span 2; }
         .vypni i { color: #eb0028; font-size: 65px; }
         .spotify { background-color: #198c47; }
@@ -190,7 +190,8 @@
 		
     <div class="buttons-section">
         <button onclick="stopRadio()" class="btn vypni"><i class="fa-solid fa-power-off"></i></button>
-        <button onclick="playRadio('https://icecast.stv.livebox.sk/slovensko_128.mp3', this, 'slovensko')" class="btn rozhlas" style="background:#007bc4;"><img src="https://www.stvr.sk/media/images/radiostations/radio-slovensko-w.svg" style="height:40%;"></button>
+        <button onclick="playRadio('https://icecast.stv.livebox.sk/slovensko_128.mp3', this, 'slovensko')" class="btn rozhlas" style="background:#007bc4; overflow: hidden;">
+			<img src="https://www.stvr.sk/media/images/radiostations/radio-slovensko-w.svg" style="width: 85%; height: auto; max-height: 70%; object-fit: contain;"></button>
         <button onclick="playRadio('https://stream.funradio.sk/fun128.mp3', this, 'fun')" class="btn fun" style="background:#b53a65;"><img src="https://www.funradio.sk/img/vue/icons/funRadioLogo.svg" style="height:40%;"></button>
         <button onclick="playRadio('https://stream.bauermedia.sk/rock-hi.mp3', this, 'rock')" class="btn rock" style="background:#222;"><img src="https://radiorock.sk/logo.svg" class="white-logo" style="height:40%;"></button>
         <button onclick="showSpotify()" class="btn spotify"><i class="fa-brands fa-spotify"></i></button>

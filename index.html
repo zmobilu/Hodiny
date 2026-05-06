@@ -58,6 +58,16 @@
         .ss-date-wrapper { display: flex; align-items: baseline; gap: 15px; }
         .ss-date { font-size: 14vw; font-weight: 300; color: #fff; }
         .ss-day { font-size: 10vw; font-weight: 200; color: #aaa; text-transform: uppercase; }
+        .ss-weekday {
+    font-size: 7vw;
+    font-weight: 300;
+    color: #ffffff;         /* Zmenené na čistú bielu */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 1.5vh;      /* Jemne upravený odstup */
+    text-align: center;
+    width: 100%;
+        }
 
         /* Pravá strana šetriča (Nové Počasie) */
         .ss-right-col { display: flex; flex-direction: column; justify-content: center !important; gap: 2vh; align-items: center; background: #000; padding: 2vh 0; }
@@ -95,7 +105,9 @@
                 <span id="h-part" class="hours-part">00</span>
                 <span id="m-part" class="minutes-part">00</span>
             </div>
-            
+            <!-- TENTO RIADOK PRIDAJ: -->
+<div id="weekday-display" class="ss-only ss-weekday"></div>
+<div id="date-block" class="ss-only">...</div>
             <div id="weather-temp-mini" class="ss-hide">--°C</div>
             <a href="shortcuts://x-callback-url/run-shortcut?name=PripojRepro" class="bt-mini-link ss-hide">
                 <i class="fa-brands fa-bluetooth-b"></i>
@@ -159,6 +171,8 @@
         let h = String(now.getHours()).padStart(2, '0');
         let m = String(now.getMinutes()).padStart(2, '0');
         let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+        const dni = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
+document.getElementById('weekday-display').textContent = dni[now.getDay()];
         document.getElementById('h-part').innerHTML = h_display;
         document.getElementById('m-part').textContent = m;
         document.getElementById('date-display').textContent = `${now.getDate()}.${now.getMonth() + 1}.`;

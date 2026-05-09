@@ -117,16 +117,30 @@
 
         .forecast-box { border-top: 1px solid #333; padding-top: calc(var(--h) * 0.02); margin-top: auto; }
         .forecast-header { 
-            display: flex; 
-            justify-content: space-around; 
-            font-size: calc(var(--h) * 0.035); 
-            color: #666; 
-            text-transform: uppercase; 
-            margin-bottom: 5px; 
-        }
-        .forecast-row { display: flex; justify-content: space-around; text-align: center; }
-        .fc-icon { font-size: calc(var(--h) * 0.09); margin-bottom: 2px; }
-        .fc-temp { font-size: calc(var(--h) * 0.06); font-weight: 300; }
+    display: flex; 
+    justify-content: space-around; 
+    /* Zväčšené z 0.035 na 0.05 */
+    font-size: calc(var(--h) * 0.035); 
+    color: #666; 
+    text-transform: uppercase; 
+    margin-bottom: calc(var(--h) * 0.01); 
+    /* Voliteľné: mierne natiahnutie do výšky */
+    transform: scaleY(1.1);
+}        .forecast-row { display: flex; justify-content: space-around; text-align: center; }
+        .fc-icon { 
+    /* Mierne zväčšenie ikony z 0.09 na 0.11 */
+    font-size: calc(var(--h) * 0.11); 
+    margin-bottom: 2px; 
+}
+        .fc-temp { 
+    /* Zväčšené z 0.06 na 0.09 */
+    font-size: calc(var(--h) * 0.09); 
+    font-weight: 300;
+    display: block;
+    /* Natiahnutie fontu do výšky (ako na hodinách) */
+    transform: scaleY(1.3);
+    margin-top: calc(var(--h) * 0.01);
+}
     </style>
 </head>
 <body>

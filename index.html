@@ -3,84 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Meteostanica iPhone 8</title>
+    <title>Meteostanica iPhone 8 - Centered Clock</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        /* ZÁKLADNÁ FIXÁCIA NA ROZLÍŠENIE */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { 
-            width: 1334px; height: 750px; 
-            background-color: #000; overflow: hidden; 
-            position: fixed; top: 0; left: 0; 
-        }
-        body { 
-            display: flex; color: #fff; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-user-select: none; user-select: none;
+        /* --- DEFINÍCIA ROZLÍŠENIA --- */
+        :root {
+            --w: 667px;
+            --h: 375px;
         }
 
-        /* --- ĽAVÝ PANEL (HODINY A INFO) --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body { 
+            width: var(--w); 
+            height: var(--h); 
+            background-color: #000; 
+            overflow: hidden; 
+            position: fixed;
+            top: 0; left: 0;
+        }
+
+        body { 
+            display: flex; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-user-select: none; 
+            user-select: none;
+        }
+
+        /* --- ĽAVÝ PANEL --- */
         .left-panel { 
-            flex: 0 0 880px; height: 750px; 
-            display: flex; flex-direction: column; 
-            padding: 0 0 30px 40px; 
+            width: 66%; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            padding-bottom: calc(var(--h) * 0.04);
             border-right: 1px solid #222;
         }
 
         #time { 
-            font-size: 440px; line-height: 0.8; 
-            display: flex; align-items: baseline; 
-            transform: scaleY(1.35); transform-origin: left top;
-            letter-spacing: -15px; margin-top: 60px;
-            height: 480px;
+            font-size: calc(var(--h) * 0.65); 
+            line-height: 0.8; 
+            display: flex; 
+            /* CENTROVANIE NA STRED */
+            justify-content: center; 
+            align-items: flex-start; 
+            
+            transform: scaleY(1.3); 
+            transform-origin: center top; /* Zmena origin na stred */
+            margin-top: -1%;
+            height: calc(var(--h) * 0.72); 
+            letter-spacing: calc(var(--w) * -0.02);
+            overflow: visible;
+            width: 100%;
         }
         .hours-part { font-weight: 600; }
-        .minutes-part { font-weight: 200; margin-left: 10px; }
+        .minutes-part { font-weight: 200; margin-left: calc(var(--w) * 0.01); }
         .red-digit { color: #eb0028 !important; }
 
         .separator { 
-            width: 820px; height: 6px; 
-            background-color: #444; margin: 10px 0 40px 0;
-            border-radius: 3px;
+            width: 90%; 
+            height: calc(var(--h) * 0.008); 
+            background-color: #444; 
+            margin: 0 auto calc(var(--h) * 0.04) auto; /* Vycentrovanie separátora */
+            border-radius: 5px;
         }
 
         .bottom-row { 
-            display: flex; align-items: center; 
-            width: 820px; height: 120px; gap: 20px;
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+            height: calc(var(--h) * 0.18); 
+            gap: calc(var(--w) * 0.02);
+            padding: 0 5%; /* Mierne bočné odsadenie pre info riadok */
         }
-        #moon-icon { font-size: 90px; color: #555; width: 100px; text-align: center; }
-        .date-text { font-size: 160px; font-weight: 300; letter-spacing: -5px; }
+        #moon-icon { font-size: calc(var(--h) * 0.12); color: #555; width: calc(var(--w) * 0.08); text-align: center; }
+        .date-text { font-size: calc(var(--h) * 0.22); font-weight: 300; letter-spacing: -1px; }
         
-        .wind-box { display: flex; align-items: center; gap: 10px; margin-left: 20px; color: #888; }
-        #wind-arrow { font-size: 55px; transition: transform 1s ease; }
-        .wind-val { font-size: 70px; font-weight: 300; }
-        .wind-unit { font-size: 24px; margin-top: 25px; }
+        .wind-box { display: flex; align-items: center; gap: 5px; color: #888; }
+        #wind-arrow { font-size: calc(var(--h) * 0.08); transition: transform 1s ease; }
+        .wind-val { font-size: calc(var(--h) * 0.1); font-weight: 300; }
+        .wind-unit { font-size: calc(var(--h) * 0.04); margin-top: calc(var(--h) * 0.03); }
 
         #nameday { 
-            margin-left: auto; font-size: 60px; font-weight: 500; 
-            color: #00FF00; text-transform: uppercase; 
+            margin-left: auto; 
+            font-size: calc(var(--h) * 0.08); 
+            font-weight: 500; 
+            color: #00FF00; 
+            text-transform: uppercase; 
         }
 
-        /* --- PRAVÝ PANEL (POČASIE) --- */
+        /* --- PRAVÝ PANEL --- */
         .right-panel { 
-            flex: 0 0 454px; height: 750px; 
-            display: flex; flex-direction: column; 
-            justify-content: space-between; padding: 40px 20px 40px 10px;
+            width: 34%; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            padding: calc(var(--h) * 0.02) calc(var(--w) * 0.02);
         }
 
         .current-weather { text-align: center; }
-        #main-icon { font-size: 210px; color: #ffcc00; margin-bottom: 10px; }
-        #main-temp { font-size: 200px; font-weight: 300; color: #98FB98; line-height: 1; }
+        #main-icon { 
+            font-size: calc(var(--h) * 0.28); 
+            color: #ffcc00; 
+            margin-bottom: calc(var(--h) * -0.01); 
+        }
+        #main-temp { font-size: calc(var(--h) * 0.25); font-weight: 300; color: #98FB98; line-height: 1; }
         
-        .extra-info { display: flex; justify-content: center; gap: 35px; margin-top: 10px; }
-        #apparent-temp { font-size: 90px; font-weight: 300; }
-        #humidity { font-size: 90px; font-weight: 200; color: #888; }
+        .extra-info { display: flex; justify-content: center; gap: calc(var(--w) * 0.04); margin-top: 5px; }
+        #apparent-temp { font-size: calc(var(--h) * 0.1); font-weight: 300; }
+        #humidity { font-size: calc(var(--h) * 0.1); font-weight: 200; color: #888; }
 
-        .forecast-box { border-top: 1px solid #333; padding-top: 20px; }
-        .forecast-header { display: flex; justify-content: space-around; font-size: 24px; color: #666; text-transform: uppercase; margin-bottom: 10px; }
+        .forecast-box { border-top: 1px solid #333; padding-top: calc(var(--h) * 0.02); margin-top: auto; }
+        .forecast-header { 
+            display: flex; 
+            justify-content: space-around; 
+            font-size: calc(var(--h) * 0.035); 
+            color: #666; 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+        }
         .forecast-row { display: flex; justify-content: space-around; text-align: center; }
-        .fc-icon { font-size: 75px; margin-bottom: 10px; }
-        .fc-temp { font-size: 50px; font-weight: 300; }
+        .fc-icon { font-size: calc(var(--h) * 0.09); margin-bottom: 2px; }
+        .fc-temp { font-size: calc(var(--h) * 0.06); font-weight: 300; }
     </style>
 </head>
 <body>
@@ -112,7 +158,6 @@
                 <span id="humidity">--%</span>
             </div>
         </div>
-
         <div class="forecast-box">
             <div class="forecast-header">
                 <span>Dnes</span>
@@ -135,27 +180,23 @@
         const WEATHER_ICONS = { 0: 'fa-sun', 1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', 45: 'fa-smog', 51: 'fa-cloud-rain', 61: 'fa-cloud-showers-heavy', 71: 'fa-snowflake', 95: 'fa-bolt' };
         const WEATHER_COLORS = { 0: '#ffcc00', 1: '#ffdb58', 2: '#aaa', 3: '#888', 51: '#4dabff', 61: '#007bff', 95: '#ffeb3b' };
 
-        // Spektrum farieb pre teplotu
         function getTempColor(t) {
-            if (t < 0) return '#00bfff'; // mráz
-            if (t < 12) return '#87CEEB'; // chladno
-            if (t < 23) return '#98FB98'; // ideálne (zelená)
-            if (t < 30) return '#ffa500'; // teplo
-            return '#ff4500'; // horúco
+            if (t < 0) return '#00bfff';
+            if (t < 12) return '#87CEEB';
+            if (t < 23) return '#98FB98';
+            if (t < 30) return '#ffa500';
+            return '#ff4500';
         }
 
-        // Výpočet fázy mesiaca
         function updateMoonIcon(date) {
             const lp = 2551443; 
             const new_moon = new Date(1970, 0, 7, 20, 35, 0);
             const phase = ((date.getTime() - new_moon.getTime()) / 1000) % lp;
             const days = Math.floor(phase / (24 * 3600));
-            let icon = "fa-circle"; // Spln (predvolené)
-            
-            if (days < 2 || days > 28) icon = "fa-circle-notch"; // Nov
-            else if (days < 14) icon = "fa-circle-half-stroke"; // Dorastá
-            else if (days > 16) icon = "fa-solid fa-circle"; // Spln / Ubúda
-            
+            let icon = "fa-circle";
+            if (days < 2 || days > 28) icon = "fa-circle-notch";
+            else if (days < 14) icon = "fa-circle-half-stroke";
+            else if (days > 16) icon = "fa-solid fa-circle";
             document.getElementById('moon-icon').className = `fas ${icon}`;
         }
 
@@ -179,11 +220,9 @@
             const now = new Date();
             let h = String(now.getHours()).padStart(2, '0');
             let m = String(now.getMinutes()).padStart(2, '0');
-            
             document.getElementById('h-part').innerHTML = (h[0] === '1') ? `<span class="red-digit">1</span>${h[1]}` : h;
             document.getElementById('m-part').textContent = m;
             document.getElementById('date-display').textContent = `${now.getDate()}.${now.getMonth() + 1}.`;
-            
             updateMoonIcon(now);
         }
 
@@ -191,33 +230,21 @@
             try {
                 const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava`);
                 const d = await r.json();
-
                 const temp = Math.round(d.current.temperature_2m);
                 const appTemp = Math.round(d.current.apparent_temperature);
-                
-                // Hlavná teplota
                 const tempEl = document.getElementById('main-temp');
                 tempEl.textContent = temp + '°C';
                 tempEl.style.color = getTempColor(temp);
-
-                // Pocitová teplota
                 const appEl = document.getElementById('apparent-temp');
                 appEl.textContent = appTemp + '°';
                 appEl.style.color = getTempColor(appTemp);
-
                 document.getElementById('humidity').textContent = Math.round(d.current.relative_humidity_2m) + '%';
-                
-                // Vietor
                 document.getElementById('wind-speed').textContent = Math.round(d.current.wind_speed_10m);
                 document.getElementById('wind-arrow').style.transform = `rotate(${d.current.wind_direction_10m - 45}deg)`;
-
-                // Ikona
                 const iconCode = d.current.weather_code;
                 const iconEl = document.getElementById('main-icon');
                 iconEl.className = `fas ${WEATHER_ICONS[iconCode] || 'fa-cloud'}`;
                 iconEl.style.color = WEATHER_COLORS[iconCode] || '#fff';
-
-                // Predpoveď
                 for (let i = 0; i <= 1; i++) {
                     const max = Math.round(d.daily.temperature_2m_max[i]);
                     const min = Math.round(d.daily.temperature_2m_min[i]);
@@ -229,7 +256,6 @@
             } catch (e) {}
         }
 
-        // Štart
         updateClock(); updateWeather(); updateNameday();
         setInterval(updateClock, 1000);
         setInterval(updateWeather, 600000);

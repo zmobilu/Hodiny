@@ -2,10 +2,10 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Moje_nove_Hodiny</title>
+    <title>Spotify_play</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -18,6 +18,8 @@
         .clock-section { flex: 1.5; display: flex; flex-direction: column; justify-content: center; align-items: center; 
             border-right: 1px solid #222; transition: all 0.5s ease-in-out; position: relative; }
         
+        #clock-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+        
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
                   transform: scaleY(1.05); transform-origin: center; }
         .hours-part { font-weight: 600; color: #ffffff; } 
@@ -26,6 +28,10 @@
         
         #weather-temp-mini { font-size: 5vw; font-weight: 300; margin-top: 10px; color: #aaa; } 
         .ss-only { display: none !important; }
+
+        /* SPOTIFY PLAYER STYLES */
+        #spotify-player-wrapper { width: 92%; height: 90%; display: none; border-radius: 12px; overflow: hidden; }
+        #spotify-player-wrapper iframe { border-radius: 12px; }
 
         #spotify-links-container { display: none; margin-top: 15px; width: 85%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
 
@@ -45,19 +51,18 @@
         body.screensaver-mode .ss-only { display: flex !important; }
         body.screensaver-mode .clock-section { flex: 1; border: none; display: grid; grid-template-columns: 1.3fr 0.7fr; align-items: stretch; }
 
-        .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-right: 1px solid #1a1a1a; padding: 0; }
+        .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-right: 1px solid #1a1a1a; padding: 0; width: 100%; height: 100%; }
         body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }
         
         #date-block { display: flex; align-items: flex-end; justify-content: flex-start; width: 90%; gap: 15px; margin-top: auto; margin-bottom: 3.5vh; padding-left: 4vw; }
         #date-display { line-height: 1; color: #ffffff; }
-          .ss-date-wrapper { display: flex; align-items: baseline; gap: 10px; }
+        .ss-date-wrapper { display: flex; align-items: baseline; gap: 10px; }
         .ss-date { font-size: 14vw; font-weight: 300; color: #fff; }
 
         .ss-day { font-size: 4.5vw; font-weight: 400; text-transform: uppercase; text-align: left; line-height: 1; max-width: 35vw; white-space: normal; display: inline-block; transform: scaleY(2); transform-origin: bottom; }
 
-        /* Farby pre meniny */
-        .name-female { color: #FFB6C1 !important; } /* Svetloružová */
-        .name-male { color: #87CEEB !important; }   /* Svetlomodrá */
+        .name-female { color: #FFB6C1 !important; } 
+        .name-male { color: #87CEEB !important; }
 
         .ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; align-items: center; background: #000; padding: 0; }
         .current-weather-group { margin-top: 4vh; text-align: center; }
@@ -79,12 +84,17 @@
 
     <div class="clock-section">
         <div class="ss-left-col">
-            <div id="time">
-                <span id="h-part" class="hours-part">00</span>
-                <span id="m-part" class="minutes-part">00</span>
+            <div id="spotify-player-wrapper" class="ss-hide">
+                <iframe id="spotify-iframe" src="" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
             </div>
-            
-            <div id="weather-temp-mini" class="ss-hide">--°C</div>
+
+            <div id="clock-content">
+                <div id="time">
+                    <span id="h-part" class="hours-part">00</span>
+                    <span id="m-part" class="minutes-part">00</span>
+                </div>
+                <div id="weather-temp-mini" class="ss-hide">--°C</div>
+            </div>
             
             <div id="spotify-links-container" class="ss-hide">
                 <div style="display: flex; justify-content: space-around; gap: 10px;">
@@ -96,7 +106,7 @@
             </div>
 
             <div id="date-block" class="ss-only">
-                    <div class="ss-date-wrapper">
+                <div class="ss-date-wrapper">
                     <span id="date-display" class="ss-date">--.--.</span>
                     <span id="day-display" class="ss-day">---</span>
                 </div>
@@ -107,13 +117,11 @@
             <div class="current-weather-group">
                 <i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
                 <div class="temp-val" id="outdoor-temp">--°C</div>
-            
                 <div class="sub-info-row">
                     <span id="apparent-temp" class="hum-val">--°</span>
                     <span id="outdoor-hum" class="hum-val">--%</span>
                 </div>
             </div>
-    
             <div id="mini-forecast-strip">
                 <div class="mini-item">
                     <span id="fc0-day" class="mini-day">Dnes</span>
@@ -188,83 +196,101 @@
         document.getElementById('m-part').textContent = m;
         document.getElementById('date-display').textContent = `${now.getDate()}.${now.getMonth() + 1}.`;
         
-        // --- LOGIKA PRE FARBU MENÍN ---
         const menoElement = document.getElementById('day-display');
         menoElement.textContent = dnesneMeno;
 
         if (dnesneMeno) {
             const poslednePismeno = dnesneMeno.trim().slice(-1).toLowerCase();
             menoElement.classList.remove('name-female', 'name-male');
-
             if (poslednePismeno === 'a' && dnesneMeno !== 'Gejza' && dnesneMeno !== 'Attila') {
                 menoElement.classList.add('name-female');
             } else {
                 menoElement.classList.add('name-male');
             }
         }
-        
-     }
+    }
     setInterval(updateClock, 1000); updateClock();
+
     async function updateWeather() {
         try {
             const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=48.1486&longitude=17.1077&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava`);
             const d = await r.json();
             const rawTemp = d.current.temperature_2m;
-            const rawApparent = d.current.apparent_temperature; 
             const currentTemp = Math.round(rawTemp) + '°C';
-            const currentHum = Math.round(d.current.relative_humidity_2m) + '%';
-            const currentCode = d.current.weather_code;
-            const tColor = getTempColor(rawTemp);
-            const appColor = getTempColor(rawApparent);
-
             document.getElementById('weather-temp-mini').textContent = currentTemp;
-            document.getElementById('weather-temp-mini').style.color = tColor;
+            document.getElementById('weather-temp-mini').style.color = getTempColor(rawTemp);
             document.getElementById('outdoor-temp').textContent = currentTemp;
-            document.getElementById('outdoor-temp').style.color = tColor;
-            document.getElementById('apparent-temp').textContent = Math.round(rawApparent) + '°';
-            document.getElementById('apparent-temp').style.color = appColor; 
-            document.getElementById('outdoor-hum').textContent = currentHum;
-
+            document.getElementById('outdoor-temp').style.color = getTempColor(rawTemp);
+            document.getElementById('apparent-temp').textContent = Math.round(d.current.apparent_temperature) + '°';
+            document.getElementById('apparent-temp').style.color = getTempColor(d.current.apparent_temperature);
+            document.getElementById('outdoor-hum').textContent = Math.round(d.current.relative_humidity_2m) + '%';
+            const iconCode = d.current.weather_code;
             const mainIconEl = document.getElementById('weather-icon-main');
-            mainIconEl.className = 'fas ' + (WEATHER_CODES[currentCode] || 'fa-cloud') + ' meteo-icon-large';
-            mainIconEl.style.color = WEATHER_COLORS[currentCode] || '#aaa';
-
+            mainIconEl.className = 'fas ' + (WEATHER_CODES[iconCode] || 'fa-cloud') + ' meteo-icon-large';
+            mainIconEl.style.color = WEATHER_COLORS[iconCode] || '#aaa';
             for (let i = 0; i <= 1; i++) {
-                const code = d.daily.weather_code[i];
                 const max = d.daily.temperature_2m_max[i];
                 const min = Math.round(d.daily.temperature_2m_min[i]);
                 document.getElementById(`fc${i}-temp`).innerHTML = `<span style="color:${getTempColor(max)}">${Math.round(max)}°</span> <span style="color:#aaa; font-size:0.8em">/ ${min}°</span>`;
                 const iconEl = document.getElementById(`fc${i}-icon`);
-                iconEl.className = 'fas ' + (WEATHER_CODES[code] || 'fa-cloud') + ' mini-icon';
-                iconEl.style.color = WEATHER_COLORS[code] || '#aaa';
+                iconEl.className = 'fas ' + (WEATHER_CODES[d.daily.weather_code[i]] || 'fa-cloud') + ' mini-icon';
+                iconEl.style.color = WEATHER_COLORS[d.daily.weather_code[i]] || '#aaa';
             }
         } catch (e) { console.log("Chyba počasia:", e); }
     }
     updateWeather(); setInterval(updateWeather, 600000);
 
     const audio = document.getElementById('audioPlayer');
+
     function playRadio(url, element, type) {
+        // Zastavíme Spotify a vrátime hodiny
+        document.getElementById('clock-content').style.display = 'flex';
+        document.getElementById('spotify-player-wrapper').style.display = 'none';
+        document.getElementById('spotify-iframe').src = "";
+
         document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
         audio.volume = VOLUME_MAP[type] || 1.0;
         audio.src = url; audio.play();
         element.classList.add('playing');
         resetIdleTimer();
     }
+
     function stopRadio() {
         audio.pause(); audio.src = "";
+        
+        // Vrátime zobrazenie hodín a zastavíme Spotify Iframe
+        document.getElementById('clock-content').style.display = 'flex';
+        document.getElementById('spotify-player-wrapper').style.display = 'none';
+        document.getElementById('spotify-iframe').src = "";
+
         document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
         document.getElementById('spotify-links-container').style.display = 'none';
         resetIdleTimer();
     }
+
     function showSpotify() {
         stopRadio();
         document.getElementById('spotify-links-container').style.display = 'block';
         document.querySelector('.spotify').classList.add('playing');
         resetIdleTimer();
     }
+
     function openSpotify(id) {
-        let url = id === 'search' ? "https://open.spotify.com/search" : `https://open.spotify.com/playlist/${id}`;
-        window.open(url, '_blank'); 
+        const playerWrapper = document.getElementById('spotify-player-wrapper');
+        const clockContent = document.getElementById('clock-content');
+        const iframe = document.getElementById('spotify-iframe');
+
+        // Ak id nie je search, použijeme embed player
+        if (id !== 'search') {
+            clockContent.style.display = 'none';
+            playerWrapper.style.display = 'block';
+            // Spotify Embed URL formát
+            iframe.src = `https://open.spotify.com/embed/playlist/${id}?utm_source=generator&theme=0`;
+        } else {
+            // Pre hľadanie otvoríme web player v rovnakom okne
+            window.location.href = "https://open.spotify.com/search";
+        }
+        resetIdleTimer();
     }
 
     let idleTimer;

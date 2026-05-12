@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Moje_nove_Hodiny</title>
+    <title>Spotify_hodiny</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -21,8 +21,9 @@
         
         #clock-content { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
         
+        /* Hodiny posunuté nižšie (margin-top zmenený z 2vh na 10vh) */
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
-                  transform: scaleY(1.05); transform-origin: center; margin-top: 2vh; }
+                  transform: scaleY(1.05); transform-origin: center; margin-top: 10vh; }
         .hours-part { font-weight: 600; color: #ffffff; } 
         .minutes-part { font-weight: 200; color: #ffffff; margin-left: 5px; } 
         .red-digit { color: #eb0028 !important; } 
@@ -32,7 +33,7 @@
 
         /* SPOTIFY PLAYER */
         #spotify-player-wrapper { width: 92%; height: 85%; display: none; border-radius: 12px; overflow: hidden; margin-top: 2vh; }
-        #spotify-player-wrapper iframe { border-radius: 12px; }
+        #spotify-player-wrapper iframe { border-radius: 12px; height: 100%; width: 100%; }
 
         #spotify-links-container { display: none; margin-top: 15px; width: 85%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
 
@@ -50,12 +51,9 @@
         body.screensaver-mode .buttons-section { display: none; }
         body.screensaver-mode .ss-hide { display: none !important; }
         body.screensaver-mode .ss-only { display: flex !important; }
-        
-        /* KLÚČOVÁ OPRAVA: Vynúti hodiny v šetriči, aj keď ich JS skryl kvôli Spotify */
         body.screensaver-mode #clock-content { display: flex !important; }
         
         body.screensaver-mode .clock-section { flex: 1; border: none; display: grid; grid-template-columns: 1.3fr 0.7fr; align-items: stretch; }
-
         .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-right: 1px solid #1a1a1a; padding: 0; width: 100%; height: 100%; }
         
         body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }
@@ -90,7 +88,7 @@
     <div class="clock-section">
         <div class="ss-left-col">
             <div id="spotify-player-wrapper" class="ss-hide">
-                <iframe id="spotify-iframe" src="" width="100%" height="100%" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>
+                <iframe id="spotify-iframe" src="" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
 
             <div id="clock-content">
@@ -164,7 +162,6 @@
     }
 
     let dnesneMeno = ""; 
-
     async function updateNameday() {
         try {
             const url = 'https://raw.githubusercontent.com/spacek/slovensky-kalendar-menin/master/sk-meniny.csv';
@@ -172,42 +169,31 @@
             const text = await response.text();
             const lines = text.split('\n');
             const now = new Date();
-            const mm = String(now.getMonth() + 1).padStart(2, '0');
-            const dd = String(now.getDate()).padStart(2, '0');
-            const targetDate = `${mm}-${dd}`;
+            const targetDate = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
             for (let line of lines) {
                 if (line.includes(targetDate)) {
-                    const parts = line.split(/[;,]/);
-                    dnesneMeno = parts[parts.length - 1].trim();
+                    dnesneMeno = line.split(/[;,]/).pop().trim();
                     break;
                 }
             }
-        } catch (e) { console.log("Meniny error"); }
+        } catch (e) {}
     }
-    updateNameday();
-    setInterval(updateNameday, 3600000);
+    updateNameday(); setInterval(updateNameday, 3600000);
 
     function updateClock() {
         const now = new Date();
         let h = String(now.getHours()).padStart(2, '0');
         let m = String(now.getMinutes()).padStart(2, '0');
-        let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
-        
-        document.getElementById('h-part').innerHTML = h_display;
+        document.getElementById('h-part').innerHTML = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
         document.getElementById('m-part').textContent = m;
         document.getElementById('date-display').textContent = `${now.getDate()}.${now.getMonth() + 1}.`;
-        
         const menoElement = document.getElementById('day-display');
         menoElement.textContent = dnesneMeno;
-
         if (dnesneMeno) {
-            const poslednePismeno = dnesneMeno.trim().slice(-1).toLowerCase();
+            const posledne = dnesneMeno.trim().slice(-1).toLowerCase();
             menoElement.classList.remove('name-female', 'name-male');
-            if (poslednePismeno === 'a' && dnesneMeno !== 'Gejza' && dnesneMeno !== 'Attila') {
-                menoElement.classList.add('name-female');
-            } else {
-                menoElement.classList.add('name-male');
-            }
+            if (posledne === 'a' && dnesneMeno !== 'Gejza' && dnesneMeno !== 'Attila') menoElement.classList.add('name-female');
+            else menoElement.classList.add('name-male');
         }
     }
     setInterval(updateClock, 1000); updateClock();
@@ -224,12 +210,10 @@
             document.getElementById('apparent-temp').textContent = Math.round(d.current.apparent_temperature) + '°';
             document.getElementById('apparent-temp').style.color = getTempColor(d.current.apparent_temperature);
             document.getElementById('outdoor-hum').textContent = Math.round(d.current.relative_humidity_2m) + '%';
-
             const iconCode = d.current.weather_code;
             const mainIconEl = document.getElementById('weather-icon-main');
             mainIconEl.className = 'fas ' + (WEATHER_CODES[iconCode] || 'fa-cloud') + ' meteo-icon-large';
             mainIconEl.style.color = WEATHER_COLORS[iconCode] || '#aaa';
-
             for (let i = 0; i <= 1; i++) {
                 const max = d.daily.temperature_2m_max[i];
                 const min = Math.round(d.daily.temperature_2m_min[i]);
@@ -238,18 +222,15 @@
                 iconEl.className = 'fas ' + (WEATHER_CODES[d.daily.weather_code[i]] || 'fa-cloud') + ' mini-icon';
                 iconEl.style.color = WEATHER_COLORS[d.daily.weather_code[i]] || '#aaa';
             }
-        } catch (e) { console.log("Weather error"); }
+        } catch (e) {}
     }
     updateWeather(); setInterval(updateWeather, 600000);
 
     const audio = document.getElementById('audioPlayer');
-
     function playRadio(url, element, type) {
-        // Zastavíme Spotify a vrátime hodiny
         document.getElementById('clock-content').style.display = 'flex';
         document.getElementById('spotify-player-wrapper').style.display = 'none';
         document.getElementById('spotify-iframe').src = "";
-
         document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
         audio.volume = VOLUME_MAP[type] || 1.0;
         audio.src = url; audio.play();
@@ -278,13 +259,12 @@
         const playerWrapper = document.getElementById('spotify-player-wrapper');
         const clockContent = document.getElementById('clock-content');
         const iframe = document.getElementById('spotify-iframe');
-
         if (id !== 'search') {
             clockContent.style.display = 'none';
             playerWrapper.style.display = 'block';
+            // POUŽITIE OFICIÁLNEHO HTTPS EMBED ODKAZU
             iframe.src = `https://open.spotify.com/embed/playlist/${id}?utm_source=generator&theme=0`;
         } else {
-            // SEARCH v tom istom okne
             window.location.href = "https://open.spotify.com/search";
         }
         resetIdleTimer();
@@ -292,14 +272,10 @@
 
     let idleTimer;
     function resetIdleTimer() {
-        // Ak sa obrazovky dotkneme, zrušíme šetrič
         if (document.body.classList.contains('screensaver-mode')) {
              document.body.classList.remove('screensaver-mode');
-             // Ak hrá Spotify, musíme po návrate zo šetriča hodiny znova skryť
              const iframe = document.getElementById('spotify-iframe');
-             if (iframe.src && iframe.src !== "" && !iframe.src.includes("about:blank")) {
-                 document.getElementById('clock-content').style.display = 'none';
-             }
+             if (iframe.src && iframe.src !== "") document.getElementById('clock-content').style.display = 'none';
         }
         clearTimeout(idleTimer);
         idleTimer = setTimeout(() => document.body.classList.add('screensaver-mode'), 20000);

@@ -162,11 +162,11 @@
 
     <script>
     const VOLUME_MAP = { 'slovensko': 0.3, 'fun': 1.0, 'rock': 0.5 };
-    const RODINA = ['Jozef', 'Mária', 'Peter'];
-    const KOLEGOVIA = ['Michal', 'Lucia', 'Martin'];
-    const SPOLUZIACI = ['Andrej', 'Simona'];
-    const MOJE_MENA = ['Dominik', 'Janka', 'Patrik', 'Martin', 'Andrea', 'Roman', 'Emília', 'Ján', 'Mária', 'Juraj', 'Peter', 'Lenka', 'Daniel', 'Hana', 'Lucia', 'Katarína', 'Tatiana', 'Rastislav', 'Viktor', 'Adela', 'Linda'
-                      , 'Michal', 'Ondrej', 'Jana', 'Viliam', 'Nataša', 'Žofia' ]; // Sem si doplň mená, ktoré majú byť žlté
+    const RODINA = ['Dominik', 'Janka', 'Patrik', 'Martin', 'Andrea', 'Roman', 'Emília', 'Ján', 'Mária', 'Juraj', 'Tatiana', 'Rastislav', 'Viktor', 'Adela', 'Linda', 'Michal', 'Ondrej', 'Jana', 'Viliam', 'Nataša', 'Kristína', 'Tibor', 'Ema'];
+    const KOLEGOVIA = ['Ivana', 'Mária', 'Iveta', 'Nina', 'Adriana', 'Jaroslava', 'Eva', 'Jana', 'Judita', 'Martin', 'Jozef', 'Marcel', 'Karol', 'Anna', 'Petra', 'Dominika'];
+    const SPOLUZIACI = ['Claudia', 'Bibiana','Zuzana', 'Kristína','Hana', 'Amanda','Viktória', 'Karin','Alexandra', 'Vanesa','Tamara', 'Zoe','Ela', 'Ema','Sebastian', 'Barbora','Jakub', 
+                        'Paula', 'Timothy', 'Maximilián','Adam', 'Milica','Alica', 'Linda', 'Róbert', 'Daniel','Laura', 'Lili', 'Oskar', 'Tomáš','Samuel'];
+    const MOJE_MENA = ['Peter', 'Lenka', 'Daniel', 'Hana', 'Lucia', 'Katarína', 'Andrej', 'Zuzana', 'Radoslav', 'Martina', 'Róbert', 'Milan', 'Juraj', 'Ladislav', 'Peter']; // Sem si doplň mená, ktoré majú byť žlté
     const WEATHER_CODES = { 0: 'fa-sun', 1: 'fa-cloud-sun', 2: 'fa-cloud-sun', 3: 'fa-cloud', 45: 'fa-smog', 48: 'fa-smog', 51: 'fa-cloud-rain', 61: 'fa-cloud-showers-heavy', 71: 'fa-snowflake', 95: 'fa-bolt' };
     const WEATHER_COLORS = { 0: '#ffcc00', 1: '#ffdb58', 2: '#aaa', 3: '#888', 45: '#777', 51: '#4dabff', 61: '#007bff', 71: '#fff', 95: '#ffeb3b' };
     
@@ -228,23 +228,32 @@ function updateClock() {
 
     if (dnesneMeno) {
         const listyTried = [menoElementSS, menoElementRadio];
-        const menoLower = dnesneMeno.toLowerCase();
-
+        
         listyTried.forEach(el => {
             if (!el) return;
-            // Reset tried
             el.classList.remove('name-female', 'name-male', 'name-moje', 'name-family', 'name-colleagues', 'name-classmates');
 
-            // Logika farieb (použijeme tú, čo sme vytvorili predtým)
-            if (RODINA.some(m => menoLower.includes(m.toLowerCase()))) {
+            const menoLower = dnesneMeno.toLowerCase();
+            const skontroluj = (zoznam) => zoznam.some(m => menoLower.includes(m.toLowerCase()));
+
+            if (skontroluj(RODINA)) {
                 el.classList.add('name-family');
             } 
-            else if (MOJE_MENA.some(m => menoLower.includes(m.toLowerCase()))) {
+            else if (skontroluj(MOJE_MENA)) {
                 el.classList.add('name-moje');
             } 
+            else if (skontroluj(KOLEGOVIA)) {
+                el.classList.add('name-colleagues');
+            } 
+            else if (skontroluj(SPOLUZIACI)) {
+                el.classList.add('name-classmates');
+            } 
             else {
-                const poslednePismeno = dnesneMeno.trim().slice(-1).toLowerCase();
-                if (poslednePismeno === 'a' && dnesneMeno !== 'Gejza' && dnesneMeno !== 'Attila') {
+                const menoTrim = dnesneMeno.trim();
+                const poslednePismeno = menoTrim.slice(-1).toLowerCase();
+                const vynimky = ['gejza', 'attila', 'boba'];
+
+                if (poslednePismeno === 'a' && !vynimky.includes(menoTrim.toLowerCase())) {
                     el.classList.add('name-female');
                 } else {
                     el.classList.add('name-male');

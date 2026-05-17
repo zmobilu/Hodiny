@@ -25,7 +25,7 @@
         .red-digit { color: #eb0028 !important; } 
         /* Štýl pre info riadok v rádio režime */
         .radio-info-wrapper { display: flex;  align-items: center;  gap: 12px; margin-top: 10px;  font-size: 3.5vw; font-weight: 300; color: #aaa;}
-        .radio-info-wrapper .separator { color: #333; font-weight: 200; }
+        .radio-info-wrapper .separator { color: #000000; font-weight: 200; }
         
         #radio-name { font-weight: 400; text-transform: uppercase; }
         #weather-temp-mini { margin-top: 0 !important; }
@@ -53,7 +53,7 @@
         .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-right: 1px solid #1a1a1a; padding: 0; }
         body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }
         
-        /* ÚPRAVA: Návrat k flex-end ukotví celý riadok na spodný okraj displeja */
+        /* ÚPRAVA: Zmenšený pravý padding (padding-right: 2vw) pritlačí vietor k pravej hrane */
 #date-block { 
     display: flex; 
     align-items: flex-end; 
@@ -63,7 +63,17 @@
     margin-top: auto; 
     margin-bottom: 3.5vh; 
     padding-left: 2vw; 
-    padding-right: 4vw; 
+    padding-right: 2vw; 
+}
+
+/* NOVÝ ŠTÝL: Decentný oddeľovač ladiaci s rádio režimom */
+.ss-separator {
+    color: #000000; 
+    font-size: 5.5vw;
+    font-weight: 200;
+    line-height: 1;
+    position: relative;
+    top: 0.5vw; /* Jemné výškové vyrovnanie k ostatným textom */
 }
 
 #date-display { 
@@ -138,6 +148,7 @@
             <span id="weather-temp-mini">--°C</span>
             <span class="separator">|</span>
             <span id="radio-date">--.--.</span>
+	<span class="separator">|</span>
             <span id="radio-name">---</span>
         </div>
         
@@ -151,14 +162,17 @@
         </div>
 
         <div id="date-block" class="ss-only">
-            <div class="ss-date-wrapper">
-                <span id="date-display" class="ss-date">--.--.</span>
-                <span id="day-display" class="ss-day">---</span>
-            </div>
-            
-            <div id="wind-block" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 0.2vh;">
-    <i id="wind-icon" class="fas fa-arrow-up" style="font-size: 5.5vw; color: #aaa; transition: transform 0.5s ease-in-out; transform-origin: center; margin-bottom: 3.0vw;"></i>
-    <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- m/s</span>
+    <div class="ss-date-wrapper">
+        <span id="date-display" class="ss-date">--.--.</span>
+        <span id="day-display" class="ss-day">---</span>
+    </div>
+    
+    <span class="ss-separator">|</span>
+    
+    <div id="wind-block" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 0.2vh;">
+        <i id="wind-icon" class="fas fa-arrow-up" style="font-size: 5.5vw; color: #aaa; transition: transform 0.5s ease-in-out; transform-origin: center; margin-bottom: 3.0vw;"></i>
+        <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- m/s</span>
+    </div>
 </div>
         </div>
     </div>

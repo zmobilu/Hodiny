@@ -226,19 +226,19 @@
             <button onclick="playRadio('https://icecast.stv.livebox.sk/slovensko_128.mp3', this, 'slovensko')" class="btn rozhlas" style="background:#00547E;"><img src="LogoSRo.png" style="max-width:80%; max-height:70%; object-fit:contain;"></button>
             <button onclick="playRadio('https://stream.funradio.sk/fun128.mp3', this, 'fun')" class="btn fun" style="background:#ffffff;"><img src="LogoFunRadio.png" style="max-width:75%; max-height:70%; object-fit:contain;"></button>
             <button onclick="playRadio('https://stream.bauermedia.sk/rock-hi.mp3', this, 'rock')" class="btn rock" style="background:#000000;"><img src="LogoAntenaROCK.png" style="max-width:70%; max-height:60%; object-fit:contain;"></button>
-            <button onclick="changePage(2)" class="btn btn-nav"><i class="fa-solid fa-circle-arrow-right"></i>SPOTIFY-JazzFM-Žurnál</button>
+            <button onclick="changePage(2)" class="btn btn-nav"><i class="fa-solid fa-circle-arrow-right"></i>SPOTIFY-JazzFM-Žurnál"</button>
         </div>
 
         <div id="page-2" class="page-group hidden">
             <button id="main-jazz-btn" onclick="showJazz(this)" class="btn jazz" style="background: #000000;"><img src="LogoJazzFM.png" style="max-width: 85%; max-height: 50%; object-fit: contain;"></button>
             <button onclick="playRadiozurnal(this)" class="btn rozhlas-info" style="background:#b30000; font-size:16px; font-weight:700;"><i class="fa-solid fa-microphone-lines" style="font-size:35px; margin-bottom:8px;"></i>ŽURNÁL</button>
             <button onclick="showSpotify()" class="btn spotify"><i class="fa-brands fa-spotify"></i></button>
-            <button onclick="changePage(1)" class="btn btn-nav"><i class="fa-solid fa-circle-arrow-left"></i>SRo-FUN-ROCK</button>
+            <button onclick="changePage(1)" class="btn btn-nav"><i class="fa-solid fa-circle-arrow-left"></i>SRo-FUN-ROCK"</button>
         </div>
     </div>
 
     <script>
-    const VOLUME_MAP = { 'slovensko': 0.3, 'fun': 1.0, 'rock': 0.5, 'radiozurnal': 0.4, 'jazzfm': 0.5, 'jazz-oscar': 0.5, 'jazz-vocal': 0.5, 'jazz-fusion': 0.5, 'jazz-yule': 0.5 };
+    const VOLUME_MAP = { 'slovensko': 0.3, 'fun': 1.0, 'rock': 0.5, 'media.rtvs.sk': 0.3, 'jazzfm': 0.5, 'jazz-oscar': 0.5, 'jazz-vocal': 0.5, 'jazz-fusion': 0.5, 'jazz-yule': 0.5 };
     const RODINA = ['Dominik', 'Janka', 'Patrik', 'Martin', 'Andrea', 'Roman', 'Emília', 'Ján', 'Mária', 'Juraj', 'Tatiana', 'Rastislav', 'Viktor', 'Adela', 'Linda', 'Michal', 'Ondrej', 'Jana', 'Viliam', 'Nataša', 'Kristína', 'Tibor', 'Ema'];
     const KOLEGOVIA = ['Ivana', 'Mária', 'Iveta', 'Nina', 'Adriana', 'Jaroslava', 'Eva', 'Jana', 'Judita', 'Martin', 'Jozef', 'Marcel', 'Karol', 'Anna', 'Petra', 'Dominika'];
     const SPOLUZIACI = ['Claudia', 'Bibiana','Zuzana', 'Kristína','Hana', 'Amanda','Viktória', 'Karin','Alexandra', 'Vanesa','Tamara', 'Zoe','Ela', 'Ema','Sebastian', 'Barbora','Jakub', 
@@ -429,6 +429,7 @@
         document.getElementById('spotify-links-container').style.display = 'none';
         document.getElementById('jazz-links-container').style.display = 'block';
         
+        
         audio.src = 'https://jazzfm91.streamb.live/SB00009'; 
         audio.play();
         
@@ -463,52 +464,66 @@ let pamatStreamu = null;
 let pamatElementu = null;
 let pamatTypu = null;
 let hraSaZurnal = false;
-let zurnalTimer = null;
 
-function playRadiozurnal(element) {
-    clearTimeout(zurnalTimer); // Resetujeme časovač, ak už nejaký bežal
-
+async function playRadiozurnal(element) {
     // Ak už správy hrajú a klikne sa znova, ihneď sa vrátime k hudbe
     if (hraSaZurnal) {
         vratZurnalSpat();
         return;
     }
 
-    // 1. Zapamätáme si aktuálne hrajúce rádio
-    const aktualneHrajuce = document.querySelector('.btn.playing');
-    if (aktualneHrajuce && aktualneHrajuce !== element && aktualneHrajuce.id !== 'main-jazz-btn') {
-        pamatStreamu = audio.src;
-        pamatElementu = aktualneHrajuce;
-        pamatTypu = Object.keys(VOLUME_MAP).find(key => audio.src.includes(key)) || 'fun';
-    } else if (document.getElementById('jazz-links-container').style.display === 'block') {
-        pamatStreamu = audio.src;
-        pamatElementu = document.getElementById('main-jazz-btn');
-        pamatTypu = 'jazzfm';
-    }
+    try {
+        // 1. Zapamätáme si aktuálne hrajúce rádio
+        const aktualneHrajuce = document.querySelector('.btn.playing');
+        if (aktualneHrajuce && aktualneHrajuce !== element && aktualneHrajuce.id !== 'main-jazz-btn') {
+            pamatStreamu = audio.src;
+            pamatElementu = aktualneHrajuce;
+            pamatTypu = Object.keys(VOLUME_MAP).find(key => audio.src.includes(key)) || 'fun';
+        } else if (document.getElementById('jazz-links-container').style.display === 'block') {
+            pamatStreamu = audio.src;
+            pamatElementu = document.getElementById('main-jazz-btn');
+            pamatTypu = 'jazzfm';
+        }
 
-    // 2. Podsvietime tlačidlo Rádiožurnálu
-    document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
-    element.classList.add('playing');
+        // 2. Podsvietime tlačidlo Rádiožurnálu
+        document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
+        element.classList.add('playing');
 
-    // 3. Spustíme priamy, živý spravodajský stream Rádio Slovensko 24
-    audio.volume = VOLUME_MAP['radiozurnal'] || 0.4;
-    audio.src = 'https://icecast.stv.livebox.sk/rtvscross_128.mp3';
-    audio.play();
-    hraSaZurnal = true;
+        // 3. Stiahneme oficiálny podcastový RSS feed Rádiožurnálu cez allorigins proxy
+        const rssUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.rtvs.sk/xml/podcast_archive.xml?series=1122');
+        const response = await fetch(rssUrl);
+        const data = await response.json();
+        
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(data.contents, "text/xml");
+        
+        // Vytiahneme url z prvého tagu <enclosure> (najnovšia pridaná epizóda Rádiožurnálu)
+        const najnovsiZurnalMp3 = xmlDoc.getElementsByTagName('enclosure')[0].getAttribute('url');
 
-    // 4. AUTOMATICKÝ ČASOVAČ: Po 5 minútach (300 000 ms) sa rádio samo vráti k hudbe
-    // Ak chceš čas zmeniť: 3 minúty = 180000, 7 minút = 420000
-    zurnalTimer = setTimeout(function() {
-        if (hraSaZurnal) {
+        if (najnovsiZurnalMp3) {
+            audio.volume = VOLUME_MAP['media.rtvs.sk'] || 0.5;
+            audio.src = najnovsiZurnalMp3;
+            audio.play();
+            hraSaZurnal = true;
+
+            // INTELIGENTNÝ NÁVRAT: Sledujeme reálny koniec MP3 súboru
+            audio.onended = function() {
+                vratZurnalSpat();
+            };
+        } else {
+            alert("Nenašla sa žiadna nahrávka Rádiožurnálu.");
             vratZurnalSpat();
         }
-    }, 300000); 
 
+    } catch (e) {
+        console.log("Chyba pri sťahovaní podcastu Rádiožurnálu:", e);
+        vratZurnalSpat();
+    }
     resetIdleTimer();
 }
 
 function vratZurnalSpat() {
-    clearTimeout(zurnalTimer);
+    audio.onended = null; // Vypneme sledovanie konca, aby sa to nebilo s bežným rádiom
     document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
     
     if (pamatStreamu && pamatStreamu !== "") {
@@ -527,10 +542,10 @@ function vratZurnalSpat() {
     pamatTypu = null;
 }
 
-// Úprava poistky pre hlavné vypínacie tlačidlo
+// Poistka: Ak klikneš na hlavné vypínacie tlačidlo celého rádiobudíka, vymažeme pamäť správ
 const povodnaStopRadioZa = stopRadio;
 stopRadio = function() {
-    clearTimeout(zurnalTimer);
+    audio.onended = null;
     hraSaZurnal = false;
     pamatStreamu = null;
     pamatElementu = null;

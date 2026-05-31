@@ -25,6 +25,7 @@
         .hours-part { font-weight: 600; color: #ffffff; } 
         .minutes-part { font-weight: 200; color: #ffffff; margin-left: 5px; } 
         .red-digit { color: #eb0028 !important; } 
+        .blue-digit { color: #00129A !important; }
         
         /* Štýl pre info riadok v rádio režime */
         .radio-info-wrapper { display: flex;  align-items: center;  gap: 12px; margin-top: 10px;  font-size: 3.5vw; font-weight: 300; color: #aaa;}
@@ -340,6 +341,7 @@ const VOLUME_MAP = {
         let h = String(now.getHours()).padStart(2, '0');
         let m = String(now.getMinutes()).padStart(2, '0');
         let h_display = (h[0] === '1') ? `<span class="red-digit">1</span>${h.substring(1)}` : h;
+        let h_display = (h[0] === '2') ? `<span class="blue-digit">1</span>${h.substring(2)}` : h;
         
         document.getElementById('h-part').innerHTML = h_display;
         document.getElementById('m-part').textContent = m;

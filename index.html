@@ -153,21 +153,23 @@
         .name-family { color: #FF8C00 !important; }     
         .name-colleagues { color: #00CED1 !important; } 
         .name-classmates { color: #32CD32 !important; } 
-        /* Názov hrajúceho rádia v šetriči */
-        #ss-radio-info {
-            font-size: 5vw;
-            font-weight: 300;
-            color: #75FA8D;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-top: 1vh;
-            height: 6vh;
-            line-height: 6vh;
-            display: none; /* Ukáže sa iba v režime šetriča */
-            justify-content: center;
-            align-items: center;
-        }
-        body.screensaver-mode #ss-radio-info { display: flex !important; }
+        /* Názov hrajúceho rádia v šetriči - absolútne poziciovaný */
+#ss-radio-info {
+    position: absolute;
+    bottom: 16vh; /* Umiestni text presne do medzery nad dátum */
+    left: 0;
+    width: 100%;
+    font-size: 4.5vw;
+    font-weight: 400;
+    color: #75FA8D;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none; /* Aby sa cez text dalo kliknúť na hodiny */
+}
+body.screensaver-mode #ss-radio-info { display: flex !important; }
         
         .ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; align-items: center; background: #000; padding: 0; }
         .current-weather-group { margin-top: 4vh; text-align: center; }

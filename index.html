@@ -37,9 +37,9 @@
         .ss-only { display: none !important; }
 
         #spotify-links-container { display: none; margin-top: 15px; width: 85%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
-        /* Štýl pre nový kontajner RTVS pod-rádií */
         #slovensko-links-container { display: none; flex-direction: row; justify-content: center;  gap: 20px; margin-top: 25px; width: 90%; } /* <-- Táto zátvorka tu je */
-
+        #fun-links-container { display: none; flex-direction: row; justify-content: center;  gap: 20px; margin-top: 25px; width: 90%; }
+        #komerce-links-container { display: none; flex-direction: row; justify-content: center;  gap: 20px; margin-top: 25px; width: 90%; }
 /* Štýl pre samotné malé štvorcové tlačidlá s logami */
 .sub-btn { 
     width: 65px; 
@@ -54,15 +54,7 @@
     justify-content: center; 
     overflow: hidden;
 }
-    /* Zaistenie, aby lišty nepretekali pod tlačidlá */
-        #slovensko-links-container, 
-        #fun-links-container, 
-        #komerce-links-container, 
-        #spotify-links-container {
-    width: 100%;
-    max-width: 80vw; /* Obmedzí šírku na priestor pod hodinami */
-    box-sizing: border-box;
-}
+    
 
 .sub-btn img { 
     width: 100%; 
@@ -271,7 +263,7 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
                 <button onclick="playRadio('https://stream.funradio.sk/cs128.mp3', this, 'funczsk')" class="sub-btn"><img src="LogoFunCZSK.png"></button>
                 <button onclick="playRadio('https://stream.funradio.sk/dance128.mp3', this, 'fundance')" class="sub-btn"><img src="LogoFunDance.png"></button>
                 <button onclick="playRadio('https://stream.funradio.sk/80-90-128.mp3', this, 'fun8090')" class="sub-btn"><img src="LogoFun8090.png"></button>
-                <button onclick="playRadio('https://stream.funradio.sk/milenialky128.mp3', this, 'mielnialky')" class="sub-btn"><img src="LogoFun2000.png"></button>
+                <button onclick="playRadio('https://stream.funradio.sk/milenialky128.mp3', this, 'milenialky')" class="sub-btn"><img src="LogoFun2000.png"></button>
             </div>
 
             <div id="komerce-links-container" class="ss-hide" style="display: none; flex-direction: row; justify-content: center; gap: 15px; margin-top: 25px; width: 90%;">

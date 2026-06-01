@@ -236,11 +236,10 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
             </div>
 
             <div id="komerce-links-container" class="ss-hide" style="display: none; flex-direction: row; justify-content: center; gap: 15px; margin-top: 25px; width: 90%;">
-                <button onclick="playRadio('https://stream.radiojazz.sk/jazz128.mp3', this, 'jazz')" class="sub-btn"><img src="LogoJazz.png"></button>
                 <button onclick="playRadio('https://stream.bauermedia.sk/expres-hi.mp3', this, 'expres')" class="sub-btn"><img src="LogoExpress.png"></button>
-                <button onclick="playRadio('https://stream.europa2.sk/128.mp3', this, 'europa2')" class="sub-btn"><img src="LogoEuropa2.png"></button>
-                <button onclick="playRadio('https://stream.radia.sk/melody128.mp3', this, 'melody')" class="sub-btn"><img src="LogoMelody.png"></button>
-                <button onclick="playRadio('https://stream.radia.sk/vlna128.mp3', this, 'vlna')" class="sub-btn"><img src="LogoVlna.png"></button>
+                <button onclick="playRadio('https://stream.bauermedia.sk/europa2-hi.mp3', this, 'europa2')" class="sub-btn"><img src="LogoEuropa2.png"></button>
+                <button onclick="playRadio('https://stream.bauermedia.sk/melody-hi.mp3', this, 'melody')" class="sub-btn"><img src="LogoMelody.png"></button>
+                <button onclick="playRadio('https://stream.radiovlna.sk/vlna-hi.mp3', this, 'vlna')" class="sub-btn"><img src="LogoVlna.png"></button>
             </div>
 
             
@@ -299,13 +298,7 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
         <div id="page-2" class="page-group hidden"> 
             <!-- 1. Tvoja obľúbená Spotify -->
             <button onclick="showSpotify()" class="btn spotify"><i class="fa-brands fa-spotify"></i></button>
-            
-            <!-- 2. Dynamické tlačidlo JAZZ (predvolene začína s logom Jazzu) -->
-            <button id="jazz-main-btn" onclick="showKomerce()" class="btn jazz" style="background:#111;">
-                <img src="LogoJazz.png" style="max-width:80%; max-height:70%; object-fit:contain;">
-            </button>
-            
-            <!-- 3. Veľké tlačidlo späť cez oba stĺpce -->
+            <button id="jazz-main-btn" onclick="showKomerce()" class="btn jazz" style="background:#111;"><img src="LogoJazz.png" style="max-width:80%; max-height:70%; object-fit:contain;"></button>
             <button onclick="changePage(1)" class="btn btn-nav" style="grid-column: span 2;"><i class="fa-solid fa-circle-arrow-left"></i>SRo FUN ROCK</button>
         </div>
     </div>  <!-- Tu končí hlavný buttons-section -->
@@ -315,7 +308,7 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
 const VOLUME_MAP = { 
     'slovensko': 0.3, 'fun': 1.0, 'rock': 0.5, 'fm': 0.3, 'devin': 0.5, 'litera': 0.5, 'regina': 0.3,
     'funchill': 0.5, 'funczsk': 0.5, 'fundance': 0.4, 'fun8090': 0.5, 'milenialky': 0.5,
-    'jazz': 0.7, 'expres': 0.5, 'europa2': 0.5, 'melody': 0.5, 'vlna': 0.5,
+    'expres': 0.5, 'europa2': 0.5, 'melody': 0.5, 'vlna': 0.5,
 };
     
     const RODINA = ['Dominik', 'Janka', 'Patrik', 'Martin', 'Andrea', 'Roman', 'Emília', 'Ján', 'Mária', 'Juraj', 'Tatiana', 'Rastislav', 'Viktor', 'Adela', 'Linda', 'Michal', 'Ondrej', 'Jana', 'Viliam', 'Nataša', 'Kristína', 'Tibor', 'Ema'];

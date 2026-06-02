@@ -655,6 +655,27 @@ function playRadio(url, element, type) {
         document.body.classList.add('screensaver-mode');
     }
 }
+        // --- FUNKCIE PRE DETAILNÉ OKNO POČASIA ---
+
+function otvorPocasie(e) {
+    if (e) {
+        e.stopPropagation(); // Zabráni prebudeniu šetriča
+        if (e.cancelable) e.preventDefault();
+    }
+    
+    // KĽÚČOVÁ PODMIENKA: Otvorí sa len ak sme reálne v šetriči
+    if (document.body.classList.contains('screensaver-mode')) {
+        document.getElementById('weather-details-modal').style.display = 'flex';
+    }
+}
+
+function zatvorPocasie(e) {
+    if (e) {
+        e.stopPropagation(); // Zabráni prepnutiu režimu pri zatváraní
+        if (e.cancelable) e.preventDefault();
+    }
+    document.getElementById('weather-details-modal').style.display = 'none';
+}
     </script>
 </body>
 </html>

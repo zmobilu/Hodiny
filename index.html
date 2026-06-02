@@ -259,7 +259,7 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
             </div>
         </div>
         
-        <div class="ss-right-col ss-only">
+        <div class="ss-right-col ss-only" ontouchstart="otvorPocasie(event)" onclick="otvorPocasie(event)" style="cursor: pointer;">
             <div class="current-weather-group">
                 <i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
                 <div class="temp-val" id="outdoor-temp">--°C</div>
@@ -302,8 +302,26 @@ body.screensaver-mode #ss-radio-info { display: flex !important; }
             <button id="jazz-main-btn" onclick="showKomerce()" class="btn jazz" style="background:#111;"><img src="https://raw.githubusercontent.com/zmobilu/assets/main/LogoJazz.png" style="max-width:80%; max-height:70%; object-fit:contain;"></button>
             <button onclick="changePage(1)" class="btn btn-nav" style="grid-column: span 2;"><i class="fa-solid fa-circle-arrow-left"></i>SRo FUN ROCK</button>
         </div>
-    </div>  <!-- Tu končí hlavný buttons-section -->
+    </div>  
+    
+<!-- NOVE DETAILNÉ OKNO POČASIA (MODAL) -->
+<div id="weather-details-modal" class="ss-only" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.95); z-index: 9999; padding: 15px; box-sizing: border-box; font-family: -apple-system, sans-serif; flex-direction: column; justify-content: space-between;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 8px;">
+        <h2 style="margin: 0; color: #ff9f0a; font-size: 4vw; text-transform: uppercase; letter-spacing: 1px;">Predpoveď a vývoj počasia</h2>
+        <button onclick="zatvorPocasie(event)" style="background: #222; color: #ff9f0a; border: 1px solid #ff9f0a; padding: 8px 18px; border-radius: 10px; font-size: 3.5vw; font-weight: bold; cursor: pointer;">Zavrieť</button>
+    </div>
 
+    <div style="background: #050505; border: 1px solid #111; border-radius: 12px; padding: 10px; flex: 1; margin: 12px 0; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="color: #aaa; font-size: 2.5vw; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;"><i class="fas fa-chart-line"></i> Vývoj teploty počas najbližších 12 hodín</div>
+        <div id="hourly-chart-container" style="display: flex; justify-content: space-around; align-items: flex-end; height: 65%; width: 100%; padding-top: 20px;">
+            </div>
+    </div>
+
+    <div id="extended-forecast-container" style="display: flex; gap: 8px; width: 100%;">
+        </div>
+
+</div>
     <script>
   // GLOBÁLNA MAPA HLASITOSTÍ
 const VOLUME_MAP = { 

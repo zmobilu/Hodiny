@@ -729,10 +729,10 @@
                     document.querySelector('.rozhlas').classList.add('playing');
                 } else if (['fun', 'funchill', 'funczsk', 'fundance', 'fun8090', 'milenialky'].includes(currentPlayingType)) {
                     document.querySelector('.btn.fun').classList.add('playing');
-                }
                 } else if (['rock'].includes(currentPlayingType)) {
                     document.querySelector('.btn.rock').classList.add('playing');
                 }
+                
                 // Aktivujeme oranžový okraj na konkrétnom sub-rádiu
                 document.querySelectorAll('.sub-btn').forEach(btn => {
                     if (btn.getAttribute('onclick').includes(`'${currentPlayingType}'`)) {

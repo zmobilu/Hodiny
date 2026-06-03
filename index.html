@@ -295,9 +295,8 @@
                     <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- km/h</span>
                 </div>
             </div>
-
-            <div id="extended-forecast-container" class="weather-details-only" style="display: none; justify-content: space-between; gap: 6px; width: 100%; height: 21vh; box-sizing: border-box; margin-top: auto; margin-bottom: 3.5vh;"></div>
-        </div>
+                <div id="extended-forecast-container" class="weather-details-only" style="display: none; justify-content: space-between; gap: 6px; width: 100%; height: 21vh; box-sizing: border-box; margin-top: auto; margin-bottom: 4.2vh;"></div>
+         </div>
     </div>
 
     <div class="buttons-section">
@@ -517,8 +516,8 @@
                 dayBox.ontouchend = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#050505'; };
 
                 // OPRÁVENÉ: Použitie flexboxu na vertikálne roztiahnutie (space-around) vo vnútri boxu, zjednotený dizajn teplôt
-                dayBox.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 4px 0; height: 100%; box-sizing: border-box;";
-
+                dayBox.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 4px 0 6px 0; height: 100%; box-sizing: border-box;";
+                
                 dayBox.innerHTML = `
                     <span class="mini-day" style="font-size: 1.8vw; letter-spacing: 1px; line-height: 1;">${nazovDna}</span>
                     <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'} mini-icon" style="font-size: 6vw; color: ${WEATHER_COLORS[code] || '#aaa'}; margin: 2px 0;"></i>

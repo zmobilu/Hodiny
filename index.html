@@ -288,7 +288,6 @@
                     <span id="day-display" class="ss-day">---</span>
                 </div>
                 
-               <div id="extended-forecast-container" class="weather-details-only" style="display: none; justify-content: space-between; gap: 6px; width: 100%; height: 13.5vh; box-sizing: border-box; margin-top: auto; margin-bottom: 3.5vh;"></div>
                 <span class="ss-separator weather-details-hide">|</span>
                 
                 <div id="wind-block" class="weather-details-hide" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 0.2vh;">
@@ -296,6 +295,8 @@
                     <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- km/h</span>
                 </div>
             </div>
+
+            <div id="extended-forecast-container" class="weather-details-only" style="display: none; justify-content: space-between; gap: 6px; width: 100%; height: 21vh; box-sizing: border-box; margin-top: auto; margin-bottom: 3.5vh;"></div>
         </div>
     </div>
 
@@ -515,12 +516,14 @@
                 dayBox.ontouchstart = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#151515'; };
                 dayBox.ontouchend = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#050505'; };
 
-                // UPRAVENÉ: Pridaný tesnejší spacing teplôt, aby box nepretiekal
+                // OPRÁVENÉ: Použitie flexboxu na vertikálne roztiahnutie (space-around) vo vnútri boxu, zjednotený dizajn teplôt
+                dayBox.style.cssText = "display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 4px 0; height: 100%; box-sizing: border-box;";
+
                 dayBox.innerHTML = `
-                    <span class="mini-day" style="font-size: 1.8vw;">${nazovDna}</span>
+                    <span class="mini-day" style="font-size: 1.8vw; letter-spacing: 1px; line-height: 1;">${nazovDna}</span>
                     <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'} mini-icon" style="font-size: 6vw; color: ${WEATHER_COLORS[code] || '#aaa'}; margin: 2px 0;"></i>
-                    <div class="mini-temp" style="font-size: 4.1vw; font-weight: 300; letter-spacing: -0.5px;">
-                        <span style="color:${getTempColor(max)}">${Math.round(max)}°</span><span style="color:#444; font-size:0.8em;">/${min}°</span>
+                    <div class="mini-temp" style="font-size: 4.5vw; font-weight: 300; line-height: 1;">
+                        <span style="color:${getTempColor(max)}">${Math.round(max)}°</span><span style="color:#aaa; font-size:0.8em;">/${min}°</span>
                     </div>
                 `;
                 extendedContainer.appendChild(dayBox);

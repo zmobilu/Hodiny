@@ -516,12 +516,13 @@
                 dayBox.ontouchstart = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#151515'; };
                 dayBox.ontouchend = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#050505'; };
 
+                // UPRAVENÉ: Presné zosúladenie tried a štýlov s mini-item (Dnes/Zajtra)
                 dayBox.innerHTML = `
-                    <span style="font-size: 3vw; font-weight: 500; text-transform: uppercase; color: #aaa; transform: scaleY(1.1);">${nazovDna}</span>
-                    <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'}" style="font-size: 7vw; color: ${WEATHER_COLORS[code] || '#aaa'}; margin: 3px 0;"></i>
-                    <div style="font-size: 3.2vw; font-weight: 400; white-space: nowrap;">
+                    <span class="mini-day" style="font-size: 1.8vw;">${nazovDna}</span>
+                    <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'} mini-icon" style="font-size: 6vw; color: ${WEATHER_COLORS[code] || '#aaa'}; margin: 2px 0;"></i>
+                    <div class="mini-temp" style="font-size: 4.5vw; font-weight: 300;">
                         <span style="color:${getTempColor(max)}">${Math.round(max)}°</span>
-                        <span style="color:#444; font-size:0.85em">/ ${min}°</span>
+                        <span style="color:#aaa; font-size:0.8em">/ ${min}°</span>
                     </div>
                 `;
                 extendedContainer.appendChild(dayBox);

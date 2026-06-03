@@ -308,11 +308,10 @@
     </div>  
         
    <div id="weather-details-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; padding: 20px; box-sizing: border-box; flex-direction: column; justify-content: space-between;">      
-        
-       <div style="display: flex; justify-content: flex-end; align-items: center; width: 100%; height: 6vh;">
-            <button onclick="zatvorPocasie(event)" style="background: #222; color: #ff9f0a; border: 2px solid #ff9f0a; padding: 5px 20px; border-radius: 12px; font-size: 4vw; font-weight: bold; cursor: pointer;">Zatvor</button>
-        </div>
-
+     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 6vh;">
+        <span id="weather-location" style="color: #666; font-size: 3.5vw; font-weight: 400; text-transform: uppercase; letter-spacing: 2px;">---</span>
+        <button onclick="zatvorPocasie(event)" style="background: #222; color: #ff9f0a; border: 2px solid #ff9f0a; padding: 5px 20px; border-radius: 12px; font-size: 4vw; font-weight: bold; cursor: pointer;">Zatvor</button>
+    </div>
         <div style="background: #000; height: 52vh; width: 100%; display: flex; align-items: flex-end;">
             <div id="hourly-chart-container" style="display: flex; justify-content: space-around; align-items: flex-end; height: 100%; width: 100%;"></div>
         </div>
@@ -460,6 +459,13 @@
             const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,precipitation,cloud_cover,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava&wind_speed_unit=kmh&forecast_days=6`);
             const d = await r.json();
             weatherDataBackup = d; 
+            // VLOŽIŤ SEM:
+            if (d.timezone && d.timezone.includes('/')) {
+            const nazovMesta = d.timezone.split('/')[1].replace(/_/g, ' ');
+            document.getElementById('weather-location').textContent = nazovMesta;
+            } else {
+            document.getElementById('weather-location').textContent = "Lokálne počasie";
+            }
 
             const rawTemp = d.current.temperature_2m;
             const rawApparent = d.current.apparent_temperature; 

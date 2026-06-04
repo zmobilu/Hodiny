@@ -537,31 +537,41 @@
     }
 
     function inicializujPocasie() {
-        // 1. KROK: Okamžite načítaj počasie pre Bratislavu (Ružinov), aby zmizli prázdne pomlčky
-        updateWeather(48.1421, 17.1964);
-        const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        if (!isSecure) {
-            // Ak to beží na nezabezpečenom protokole, GPS nehľadaj a len zapni pravidelnú aktualizáciu
-            setInterval(() => updateWeather(48.1421, 17.1964), 600000);
-            return;
-        }
-        // 2. KROK: Na pozadí skús zistiť, či je k dispozícii presnejšia poloha
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // Ak systém polohu schváli, prepíš dáta podľa presných súradníc
-                    updateWeather(position.coords.latitude, position.coords.longitude);
-                    // Vymaž staré intervaly a nastav pravidelnú aktualizáciu na novú polohu
-                    if (window.weatherInterval) clearInterval(window.weatherInterval);
-                    window.weatherInterval = setInterval(() => updateWeather(position.coords.latitude, position.coords.longitude), 600000);
-                },
-                (error) => {
-                    // Ak používateľ zakáže polohu alebo zlyhá, pokračujeme na intervale pre Bratislavu
-                    console.log("GPS nedostupné, zostáva Bratislava.");
-                },
-                { timeout: 3000, maximumAge: 60000 }
-            );
-        }
+    // 1. KROK: Okamžite a bez čakania natiahni Bratislavu (Ružinov)
+    updateWeather(48.1421, 17.1964);
+
+    // Nastavíme bezpečný interval na pozadí pre Bratislavu (poistka)
+    window.weatherInterval = setInterval(() => {
+        // Ak medzičasom GPS nezmenilo súradnice, toč stále Bratislavu
+        const aktuálnyLat = window.customLat || 48.1421;
+        const aktuálnyLon = window.customLon || 17.1964;
+        updateWeather(aktuálnyLat, aktuálnyLon);
+    }, 600000);
+
+    const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (!isSecure) {
+        console.log("Nezabezpečený protokol, končíme pri defaultnej Bratislave.");
+        return;
+    }
+
+    // 2. KROK: Skúsime na pozadí zistiť presnejšiu polohu (ak sme na HTTPS)
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // Uložíme si nové GPS súradnice, aby ich používal aj interval vyššie
+                window.customLat = position.coords.latitude;
+                window.customLon = position.coords.longitude;
+                
+                // Okamžite prepíšeme počasie presnou polohou
+                updateWeather(window.customLat, window.customLon);
+            },
+            (error) => {
+                console.log("GPS nedostupné alebo zamietnuté, zostáva Bratislava. Dôvod:", error.message);
+            },
+            { timeout: 3000, maximumAge: 60000 }
+        );
+    }
+}
 
         // Pre istotu zapneme základný interval pre Bratislavu, ak by GPS hľadanie zlyhalo
         window.weatherInterval = setInterval(() => updateWeather(48.1421, 17.1964), 600000);

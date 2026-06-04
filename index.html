@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hodiny resštart z Moje_radio</title>
+    <title>Hodiny z MojeRadio </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="data:,">
     
@@ -15,8 +15,6 @@
         body:not(.weather-details-mode) .weather-details-only { display: none !important; }
         body.weather-details-mode .weather-details-hide { display: none !important; }
         body.weather-details-mode .weather-details-only { display: flex !important; }
-        /* Skryť info o rádiu, keď je spustený detailný prehľad počasia */
-        body.weather-details-mode #ss-radio-info { display: none !important; }
         
         body { margin: 0; padding: 0; background-color: #000; color: #fff;
             font-family: -apple-system-short-condensed, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -94,35 +92,11 @@
         body.screensaver-mode #fun-links-container { display: none !important; } 
         body.screensaver-mode #komerce-links-container { display: none !important; }
         body.screensaver-mode .ss-only { display: flex !important; }
+        
+        /* FIX: Zachovanie flexu, aby hodiny ostali centrované, len prehodíme vizuálne stĺpce pomocou row-reverse */
+        body.screensaver-mode .clock-section { flex: 1; border: none; display: flex; flex-direction: row-reverse; align-items: stretch; }
 
-        body.screensaver-mode .clock-section { 
-            flex: 1; 
-            border: none; 
-            display: grid; 
-            grid-template-columns: 1.3fr 0.7fr; /* Vľavo široký priestor pre graf, vpravo užší pre hodiny */
-            align-items: stretch; 
-        }
-
-        /* Korekcia smeru textu a zarovnania pre otočené stĺpce */
-        .ss-left-col { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start !important; 
-            align-items: center; 
-            border-left: 1px solid #1a1a1a; 
-            padding: 0; 
-            width: 100%; 
-        }
-
-        .ss-right-col { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between !important; 
-            align-items: center; 
-            background: #000; 
-            padding: 0; 
-        }
-
+        .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-left: 1px solid #1a1a1a; padding: 0; width: 65%; }
         body.screensaver-mode #time { font-size: 32vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }
         
         #date-block { 
@@ -133,7 +107,7 @@
             box-sizing: border-box; 
             margin-top: auto; 
             margin-bottom: 3.5vh; 
-            padding-left: 2vw;  
+            padding-left: 2vw; /* Výmena paddingov pre zachovanie symetrie na opačnej strane */
             padding-right: 0.5vw; 
         }
 
@@ -167,7 +141,7 @@
         #ss-radio-info {
             position: absolute;
             bottom: 25vh;
-            right: 2vw; 
+            left: 42vw; /* FIX: Posunuté viac doprava, aby text "HRA" nesedel pod počasím na ľavej strane */
             width: 38vw;
             font-size: 4.0vw;
             font-weight: 400;
@@ -181,6 +155,10 @@
         }
         body.screensaver-mode #ss-radio-info { display: flex !important; }
         
+        /* Skryť info o rádiu, keď je spustený detailný prehľad počasia */
+        body.weather-details-mode #ss-radio-info { display: none !important; }
+
+        .ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; align-items: center; background: #000; padding: 0; width: 35%; }
         .current-weather-group { margin-top: 4vh; text-align: center; }
         .meteo-icon-large { font-size: 15vw; margin-bottom: 5px; }
         .sub-info-row { display: flex; justify-content: center; gap: 14px; width: 100%; transform: scaleX(1.2) scaleY(0.8); transform-origin: center; margin-top: -2px; }
@@ -225,43 +203,17 @@
 
     <audio id="audioPlayer" preload="none" playsinline></audio>
 
-    <div class="clock-section" style="display: grid; grid-template-columns: 1.3fr 0.7fr; align-items: stretch; border: none;">
-        
-        <div class="ss-right-col ss-only">
-            <div id="ss-weather-trigger" style="cursor: pointer; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
-                <div class="current-weather-group">
-                    <i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
-                    <div class="temp-val" id="outdoor-temp">--°C</div>
-                    
-                    <div class="sub-info-row">
-                        <span id="apparent-temp" class="hum-val">--°</span>
-                        <span id="outdoor-hum" class="hum-val">--%</span>
-                    </div>
-                </div>
-                
-                <div id="mini-forecast-strip">
-                    <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 0)">
-                        <span id="fc0-day" class="mini-day">Dnes</span>
-                        <i id="fc0-icon" class="fas fa-cloud mini-icon"></i>
-                        <span id="fc0-temp" class="mini-temp">-- / --</span>
-                    </div>
-                    <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 1)">
-                        <span id="fc1-day" class="mini-day">Zajtra</span>
-                        <i id="fc1-icon" class="fas fa-cloud mini-icon"></i>
-                        <span id="fc1-temp" class="mini-temp">-- / --</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
+    <div class="clock-section">
         <div class="ss-left-col">
         
             <div id="time" style="cursor: pointer;" class="weather-details-hide">
                 <span id="h-part" class="hours-part">00</span>
                 <span id="m-part" class="minutes-part">00</span>
             </div>
+            
+            <div id="ss-radio-info" class="weather-details-hide"></div>
 
-            <div id="weather-details-top-inline" class="weather-details-only" style="display: none; flex-direction: column; width: 100%; height: 53vh; padding: 10px 10px 0 20px; box-sizing: border-box; justify-content: space-between;">
+            <div id="weather-details-top-inline" class="weather-details-only" style="display: none; flex-direction: column; width: 100%; height: 53vh; padding: 10px 10px 0 10px; box-sizing: border-box; justify-content: space-between;">
                 <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 5vh;">
                     <span id="weather-location" style="color: #666; font-size: 2.5vw; font-weight: 400; text-transform: uppercase; letter-spacing: 2px;">---</span>
                     <button onclick="zatvorPocasie(event)" style="background: #222; color: #ff9f0a; border: 2px solid #ff9f0a; padding: 2px 15px; border-radius: 8px; font-size: 2.5vw; font-weight: bold; cursor: pointer;">Zatvor</button>
@@ -270,7 +222,7 @@
                     <div id="hourly-chart-container" style="display: flex; justify-content: space-around; align-items: flex-end; height: 100%; width: 100%;"></div>
                 </div>
             </div>
-                    
+                       
             <div class="radio-info-wrapper ss-hide">
                 <span id="weather-temp-mini">--°C</span>
                 <span class="separator">|</span>
@@ -324,9 +276,33 @@
                     <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- km/h</span>
                 </div>
             </div>
-
-            <div id="ss-radio-info" class="weather-details-hide"></div>
-
+        </div>
+        
+        <div class="ss-right-col ss-only">
+            <div id="ss-weather-trigger" style="cursor: pointer; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div class="current-weather-group">
+                    <i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
+                    <div class="temp-val" id="outdoor-temp">--°C</div>
+            
+                    <div class="sub-info-row">
+                        <span id="apparent-temp" class="hum-val">--°</span>
+                        <span id="outdoor-hum" class="hum-val">--%</span>
+                    </div>
+                </div>
+      
+                <div id="mini-forecast-strip">
+                    <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 0)">
+                        <span id="fc0-day" class="mini-day">Dnes</span>
+                        <i id="fc0-icon" class="fas fa-cloud mini-icon"></i>
+                        <span id="fc0-temp" class="mini-temp">-- / --</span>
+                    </div>
+                    <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 1)">
+                        <span id="fc1-day" class="mini-day">Zajtra</span>
+                        <i id="fc1-icon" class="fas fa-cloud mini-icon"></i>
+                        <span id="fc1-temp" class="mini-temp">-- / --</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

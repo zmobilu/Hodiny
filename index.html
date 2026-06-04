@@ -21,18 +21,17 @@
             display: flex; height: 100vh; width: 100vw; overflow: hidden;
             -webkit-user-select: none; user-select: none; }
 
-        /* --- REŽIM RÁDIO --- */
-        /* --- REŽIM RÁDIO (OPRAVENÝ) --- */
-.clock-section { 
-    flex: 1.5; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    border-right: 1px solid #222; 
-    transition: all 0.5s ease-in-out; 
-    position: relative; 
-}
+        /* --- REŽIM RÁDIO (STRIKTNÝ FLEXBOX) --- */
+        .clock-section { 
+            flex: 1.5; 
+            display: flex !important; 
+            flex-direction: column !important; 
+            justify-content: center !important; 
+            align-items: center !important; 
+            border-right: 1px solid #222; 
+            transition: all 0.5s ease-in-out; 
+            position: relative; 
+        }
         
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
                   transform: scaleY(1.05); transform-origin: center; }
@@ -42,7 +41,7 @@
         .blue-digit { color: #307CEB !important; }
         
         /* Štýl pre info riadok v rádio režime */
-        .radio-info-wrapper { display: flex;  align-items: center;  gap: 12px; margin-top: 10px;  font-size: 3.5vw; font-weight: 300; color: #aaa;}
+        .radio-info-wrapper { display: flex; align-items: center; gap: 12px; margin-top: 10px; font-size: 3.5vw; font-weight: 300; color: #aaa;}
         .radio-info-wrapper .separator { color: #222; font-weight: 200; }
         
         #radio-name { font-weight: 400; text-transform: uppercase; }
@@ -50,11 +49,11 @@
         
         .ss-only { display: none !important; }
 
-        #slovensko-links-container   { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
-        #fun-links-container         { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
-        #komerce-links-container     { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
-        #spotify-links-container     { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
-
+        #slovensko-links-container   { display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; }
+        #fun-links-container         { display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; }
+        #komerce-links-container     { display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; }
+        #spotify-links-container     { display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
+        
         .sub-btn { 
             width: 90px; 
             height: 90px; 
@@ -102,13 +101,13 @@
         body.screensaver-mode #komerce-links-container { display: none !important; }
         body.screensaver-mode .ss-only { display: flex !important; }
         
-        /* OPRAVENÉ: Prevrátenie stĺpcov (Počasie vľavo, Hodiny vpravo) */
+        /* Prepis rozloženia stĺpcov pre šetrič */
         body.screensaver-mode .clock-section { 
             flex: 1; 
             border: none; 
-            display: grid; 
-            grid-template-columns: 0.7fr 1.3fr; 
-            align-items: stretch; 
+            display: grid !important; 
+            grid-template-columns: 0.7fr 1.3fr !important; 
+            align-items: stretch !important; 
         }
         
         /* ĽAVÝ STĹPEC: Celé veľké inline počasie (grafy + spodné boxy) */

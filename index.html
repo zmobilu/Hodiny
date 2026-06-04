@@ -141,7 +141,7 @@
         #ss-radio-info {
             position: absolute;
             bottom: 25vh;
-            left: 42vw; /* FIX: Posunuté viac doprava, aby text "HRA" nesedel pod počasím na ľavej strane */
+            left: 35vw; /* FIX: Posunuté viac doprava, aby text "HRA" nesedel pod počasím na ľavej strane */
             width: 38vw;
             font-size: 4.0vw;
             font-weight: 400;
@@ -537,28 +537,34 @@
     }
 
     function inicializujPocasie() {
+        // 1. KROK: Okamžite načítaj počasie pre Bratislavu (Ružinov), aby zmizli prázdne pomlčky
+        updateWeather(48.1421, 17.1964);
         const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         if (!isSecure) {
-            updateWeather(); 
-            setInterval(updateWeather, 600000);
+            // Ak to beží na nezabezpečenom protokole, GPS nehľadaj a len zapni pravidelnú aktualizáciu
+            setInterval(() => updateWeather(48.1421, 17.1964), 600000);
             return;
         }
+        // 2. KROK: Na pozadí skús zistiť, či je k dispozícii presnejšia poloha
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
+                    // Ak systém polohu schváli, prepíš dáta podľa presných súradníc
                     updateWeather(position.coords.latitude, position.coords.longitude);
-                    setInterval(() => updateWeather(position.coords.latitude, position.coords.longitude), 600000);
+                    // Vymaž staré intervaly a nastav pravidelnú aktualizáciu na novú polohu
+                    if (window.weatherInterval) clearInterval(window.weatherInterval);
+                    window.weatherInterval = setInterval(() => updateWeather(position.coords.latitude, position.coords.longitude), 600000);
                 },
                 (error) => {
-                    updateWeather(); 
-                    setInterval(updateWeather, 600000);
+                    // Ak používateľ zakáže polohu alebo zlyhá, pokračujeme na intervale pre Bratislavu
+                    console.log("GPS nedostupné, zostáva Bratislava.");
                 },
                 { timeout: 3000, maximumAge: 60000 }
             );
-        } else {
-            updateWeather();
-            setInterval(updateWeather, 600000);
         }
+
+        // Pre istotu zapneme základný interval pre Bratislavu, ak by GPS hľadanie zlyhalo
+        window.weatherInterval = setInterval(() => updateWeather(48.1421, 17.1964), 600000);
     }
 
     function vykresliGraf(targetDayIndex) {

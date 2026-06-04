@@ -431,9 +431,11 @@ function updateClock() {
 
 setInterval(updateClock, 1000); updateClock();
 
-async function updateWeather(lat, lon) {
-    const currentLat = lat || 48.1421;
-    const currentLon = lon || 17.1964;
+// --- OPRAVENÁ FUNKCIA PRE POČASIE NATVRDO PRE BRATISLAVU ---
+async function updateWeather() {
+    // Fixné súradnice pre Bratislavu, žiadne premenné ani GPS
+    const currentLat = 48.1421;
+    const currentLon = 17.1964;
     
     try {
         const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${currentLat}&longitude=${currentLon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,precipitation,cloud_cover,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava&wind_speed_unit=kmh&forecast_days=6`);
@@ -441,12 +443,8 @@ async function updateWeather(lat, lon) {
         const d = await r.json();
         weatherDataBackup = d; 
 
-        if (d.timezone && d.timezone.includes('/')) {
-            const nazovMesta = d.timezone.split('/')[1].replace(/_/g, ' ');
-            document.getElementById('weather-location').textContent = nazovMesta;
-        } else {
-            document.getElementById('weather-location').textContent = `${currentLat.toFixed(2)}°N, ${currentLon.toFixed(2)}°E`;
-        }
+        // Natvrdo prepíšeme zobrazenie lokality na čistý text
+        document.getElementById('weather-location').textContent = "BRATISLAVA";
 
         const rawTemp = d.current.temperature_2m;
         const rawApparent = d.current.apparent_temperature; 
@@ -521,29 +519,16 @@ async function updateWeather(lat, lon) {
     } catch (e) { console.log("Chyba počasia pri sťahovaní dát:", e); }
 }
 
+// --- MAXIMÁLNE ZJEDNODUŠENÁ INICIALIZÁCIA (BEZ GPS OTRAVOVANIA) ---
 function inicializujPocasie() {
-    window.customLat = 48.1421;
-    window.customLon = 17.1964;
-    updateWeather(window.customLat, window.customLon);
+    // Hneď voláme počasie pre Bratislavu
+    updateWeather();
 
+    // Pravidelný update každých 10 minút
     if (window.weatherInterval) clearInterval(window.weatherInterval);
     window.weatherInterval = setInterval(() => {
-        updateWeather(window.customLat, window.customLon);
+        updateWeather();
     }, 600000);
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                window.customLat = position.coords.latitude;
-                window.customLon = position.coords.longitude;
-                updateWeather(window.customLat, window.customLon);
-            },
-            (error) => { 
-                console.log("GPS odmietnuté alebo nedostupné. Bežíme fixne na Bratislava."); 
-            },
-            { timeout: 7000, maximumAge: 60000, enableHighAccuracy: false }
-        );
-    }
 }
 
 function vykresliGraf(targetDayIndex) {

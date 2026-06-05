@@ -22,8 +22,17 @@
             -webkit-user-select: none; user-select: none; }
 
         /* --- REŽIM RÁDIO --- */
-        .clock-section { flex: 1.5; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            border-right: 1px solid #222; transition: all 0.5s ease-in-out; position: relative; }
+        /* Sekcia s hodinami (vpravo) bude zaberať presne 65% */
+.clock-section { 
+    width: 65%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    border-right: 1px solid #222; 
+    transition: all 0.5s ease-in-out; 
+    position: relative; 
+}
         
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
                   transform: scaleY(1.05); transform-origin: center; }
@@ -69,8 +78,18 @@
         }
 
         .sub-btn.playing { border: 2px solid #ff9f0a !important; }
-        .buttons-section { flex: 1.1; display: grid; grid-template-columns: 1fr 1fr; 
-            grid-template-rows: 0.7fr 1fr 1fr; gap: 8px; padding: 10px; background: #050505; }
+        
+        /* Sekcia s tlačidlami rádia (vľavo) bude mať presne 35% */
+.buttons-section { 
+    width: 35%; 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    grid-template-rows: 0.7fr 1fr 1fr; 
+    gap: 8px; 
+    padding: 10px; 
+    background: #050505; 
+    box-sizing: border-box; /* Poistka, aby padding neroširoval blok */
+}
         
         .page-group { display: contents; }
         .page-group.hidden { display: none !important; }
@@ -93,8 +112,14 @@
         body.screensaver-mode #komerce-links-container { display: none !important; }
         body.screensaver-mode .ss-only { display: flex !important; }
         
-        /* FIX: Zachovanie flexu, aby hodiny ostali centrované, len prehodíme vizuálne stĺpce pomocou row-reverse */
-        body.screensaver-mode .clock-section { flex: 1; border: none; display: flex; flex-direction: row-reverse; align-items: stretch; }
+        /* Pri šetriči roztiahneme celý kontajner na 100vw, ale vnútorné stĺpce si udržia podiel */
+body.screensaver-mode .clock-section { 
+    width: 100vw; 
+    border: none; 
+    display: flex; 
+    flex-direction: row-reverse; 
+    align-items: stretch; 
+}
 
         .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; border-left: 1px solid #1a1a1a; padding: 0; width: 65%; }
         body.screensaver-mode #time { font-size: 30vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }

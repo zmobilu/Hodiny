@@ -232,6 +232,52 @@
             cursor: pointer; 
             transition: all 0.2s;
         }
+        /* CSS pre upratanie textov a ikon v hodinovom grafe */
+        .chart-rain-info {
+            font-size: 1.5vw !important;
+            color: #4dabff;
+            font-weight: 500;
+            height: 1.8vw;
+            line-height: 1.8vw;
+            display: block;
+        }
+        .chart-icon-info {
+            font-size: 2.5vw !important;
+            height: 3.0vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1px 0 !important;
+        }
+        .chart-temp-info {
+            font-size: 2.0vw !important;
+            font-weight: bold;
+            margin-bottom: 3px !important;
+            display: block;
+        }
+        /* CSS pre upratanie textov a ikon v hodinovom grafe */
+        .chart-rain-info {
+            font-size: 1.5vw !important;
+            color: #4dabff;
+            font-weight: 500;
+            height: 1.8vw;
+            line-height: 1.8vw;
+            display: block;
+        }
+        .chart-icon-info {
+            font-size: 2.5vw !important;
+            height: 3.0vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1px 0 !important;
+        }
+        .chart-temp-info {
+            font-size: 2.0vw !important;
+            font-weight: bold;
+            margin-bottom: 3px !important;
+            display: block;
+        }
     </style>
 </head>
 
@@ -598,7 +644,6 @@ function vykresliGraf(targetDayIndex) {
     if (!chartContainer || !weatherDataBackup) return;
     chartContainer.innerHTML = ''; 
 
-    /* PRIDANÉ: Pole pre ukladanie hodinových kódov počasia (codes) */
     let temps = [], rain = [], cloud = [], wind = [], labels = [], codes = [];
 
     if (targetDayIndex === null || targetDayIndex === 0) {
@@ -607,7 +652,6 @@ function vykresliGraf(targetDayIndex) {
         rain = (weatherDataBackup.hourly.precipitation || weatherDataBackup.hourly.rain || []).slice(currentHourIndex, currentHourIndex + 12);
         cloud = (weatherDataBackup.hourly.cloud_cover || []).slice(currentHourIndex, currentHourIndex + 12);
         wind = (weatherDataBackup.hourly.wind_speed_10m || []).slice(currentHourIndex, currentHourIndex + 12);
-        /* Načítanie kódov pre dnešný/aktuálny deň */
         codes = (weatherDataBackup.hourly.weather_code || []).slice(currentHourIndex, currentHourIndex + 12);
         
         for (let idx = 0; idx < 12; idx++) {
@@ -621,7 +665,6 @@ function vykresliGraf(targetDayIndex) {
             rain.push((weatherDataBackup.hourly.precipitation || weatherDataBackup.hourly.rain || [])[hourOffset]);
             cloud.push((weatherDataBackup.hourly.cloud_cover || [])[hourOffset]);
             wind.push((weatherDataBackup.hourly.wind_speed_10m || [])[hourOffset]);
-            /* Načítanie kódov pre vybraný budúci deň (v 2-hodinových krokoch) */
             codes.push((weatherDataBackup.hourly.weather_code || [])[hourOffset]);
             
             labels.push(String(step * 2));
@@ -635,32 +678,31 @@ function vykresliGraf(targetDayIndex) {
     temps.forEach((temp, idx) => {
         if (temp === undefined) return;
         const roundedTemp = Math.round(temp);
-        const pct = ((temp - minGraphTemp) / tempRange) * 55 + 20; 
+        // Upravený koeficient výšky (48 + 20), aby zostalo viac miesta na ikony navrchu
+        const pct = ((temp - minGraphTemp) / tempRange) * 48 + 20; 
         
         const rainVal = rain[idx] ? parseFloat(rain[idx]) : 0;
-        const rainHtml = rainVal > 0 ? `<span style="font-size: 1.6vw; color: #4dabff; margin-bottom: 2px; font-weight: 500;">💧${rainVal.toFixed(1)}</span>` : `<span style="height: 1.8vw;"></span>`;
+        const rainHtml = rainVal > 0 ? `<span class="chart-rain-info">💧${rainVal.toFixed(1)}</span>` : `<span class="chart-rain-info"></span>`;
         
-        /* PRIDANÉ: Vyhodnotenie kódu počasia a vygenerovanie malej ikony nad teplotu */
         const cCode = codes[idx] !== undefined ? codes[idx] : 0;
         const iconClass = WEATHER_CODES[cCode] || 'fa-cloud';
         const iconColor = WEATHER_COLORS[cCode] || '#aaa';
-        const weatherIconHtml = `<i class="fas ${iconClass}" style="font-size: 2.8vw; color: ${iconColor}; margin-bottom: 3px;"></i>`;
+        const weatherIconHtml = `<i class="fas ${iconClass} chart-icon-info" style="color: ${iconColor};"></i>`;
 
         const cloudVal = cloud[idx] ? Math.round(cloud[idx]) : 0;
         const bgOpacity = 0.05 + (cloudVal / 100) * 0.15; 
         const colBackground = `linear-gradient(to top, rgba(255,255,255, ${bgOpacity}), ${getTempColor(temp)})`;
         
         const windVal = wind[idx] ? Math.round(wind[idx]) : 0;
-        const windHtml = windVal > 0 ? `<span style="font-size: 1.6vw; color: #888; margin-top: 3px;"><i class="fas fa-wind" style="font-size:0.8em;"></i> ${windVal}</span>` : `<span style="height: 1.8vw;"></span>`;
+        const windHtml = windVal > 0 ? `<span style="font-size: 1.6vw; color: #555; margin-top: 5px;"><i class="fas fa-wind" style="font-size:0.8em;"></i> ${windVal}</span>` : `<span style="height: 1.8vw;"></span>`;
 
         const column = document.createElement('div');
         column.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 7.8%; flex-shrink: 0;`;
         
-        /* ZMENENÉ: HTML štruktúra stĺpca (pridaná weatherIconHtml hneď pod zrážky) */
         column.innerHTML = `
             ${rainHtml}
             ${weatherIconHtml}
-            <span style="font-size: 2.2vw; font-weight: bold; color: ${getTempColor(temp)}; margin-bottom: 3px;">${roundedTemp}°</span>
+            <span class="chart-temp-info" style="color: ${getTempColor(temp)};">${roundedTemp}°</span>
             <div style="width: 100%; height: ${pct}%; background: ${colBackground}; border-radius: 4px 4px 0 0; border: 1px solid #222; border-bottom: none; box-sizing: border-box;"></div>
             <span style="font-size: 1.8vw; color: #555; margin-top: 5px; font-weight: 500;">${labels[idx]}</span>
             ${windHtml}

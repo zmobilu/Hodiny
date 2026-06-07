@@ -229,7 +229,7 @@ body.screensaver-mode .clock-section {
         
         .day-box-active { border: 1px solid #ff9f0a !important; background: #111 !important; }
 
-        /* Zjednotenie veľkosti spodných boxov s hornými (Dnes/Zajtra) a ich nahustenie */
+       /* Presná kópia formátu z DNES a ZAJTRA pre ostatné dni */
         .forecast-day-box {
             background: #050505; 
             border: 1px solid #111; 
@@ -238,7 +238,7 @@ body.screensaver-mode .clock-section {
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: center; /* ZMENENÉ: Tlačí všetky elementy k stredu na seba */
+            justify-content: center;
             padding: 4px 0; 
             cursor: pointer; 
             transition: all 0.2s;
@@ -248,17 +248,20 @@ body.screensaver-mode .clock-section {
             color: #aaa !important; 
             text-transform: uppercase !important; 
             letter-spacing: 1px !important;
-            margin-bottom: 2px !important; /* Tesný odstup pod textom dňa */
+            font-weight: normal !important;
+            transform: none !important;
+            margin-bottom: 2px !important;
         }
         .forecast-day-box i { 
             font-size: 6vw !important; 
-            margin: 2px 0 4px 0 !important; /* Presný tesný odstup okolo ikony */
+            margin: 2px 0 4px 0 !important;
         }
         .forecast-day-box div { 
             font-size: 4.5vw !important; 
             font-weight: 300 !important;
             color: #fff !important;
             line-height: 1.0 !important;
+            white-space: nowrap !important;
         }
         
     </style>
@@ -579,11 +582,11 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
             dayBox.ontouchend = () => { if(!dayBox.classList.contains('day-box-active')) dayBox.style.background = '#050505'; };
 
             dayBox.innerHTML = `
-                <span style="font-size: 3vw; font-weight: 500; text-transform: uppercase; color: #aaa; transform: scaleY(1.1);">${nazovDna}</span>
-                <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'}" style="font-size: 7vw; color: ${WEATHER_COLORS[code] || '#aaa'}; margin: 3px 0;"></i>
-                <div style="font-size: 3.2vw; font-weight: 400; white-space: nowrap;">
+                <span>${nazovDna}</span>
+                <i class="fas ${WEATHER_CODES[code] || 'fa-cloud'}" style="color: ${WEATHER_COLORS[code] || '#aaa'};"></i>
+                <div>
                     <span style="color:${getTempColor(max)}">${Math.round(max)}°</span>
-                    <span style="color:#444; font-size:0.85em">/ ${min}°</span>
+                    <span style="color:#aaa; font-size:0.85em">/ ${min}°</span>
                 </div>
             `;
             extendedContainer.appendChild(dayBox);

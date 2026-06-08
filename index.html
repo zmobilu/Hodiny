@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hodiny z MojeRadio</title>
+    <title>Hodiny z ROCK</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="icon" href="data:,">
     
@@ -23,8 +23,7 @@
 
         /* --- REŽIM RÁDIO --- */
         /* Sekcia s hodinami (vpravo) bude zaberať presne 65% */
-/* Sekcia s hodinami/grafom (vpravo v rádio režime) */
-.clock-section { 
+    .clock-section { 
             width: 65%; 
             display: flex; 
             flex-direction: column; 
@@ -57,6 +56,7 @@
         #slovensko-links-container   { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
         #fun-links-container         { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
         #komerce-links-container     { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
+        #rock-links-container        { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; }
         #spotify-links-container     { display: none; flex-direction: row; justify-content: center;  gap: 12px; margin-top: 25px; width: 100%; background: #0a0a0a; border-radius: 12px; padding: 10px; border: 1px solid #222; }
 
         .sub-btn { 
@@ -104,6 +104,7 @@
         body.screensaver-mode .ss-hide { display: none !important; }
         body.screensaver-mode #fun-links-container { display: none !important; } 
         body.screensaver-mode #komerce-links-container { display: none !important; }
+        body.screensaver-mode #rock-links-container { display: none !important; } /* PRIDANÉ */
         body.screensaver-mode .ss-only { display: flex !important; }
         
         /* Pri šetriči roztiahneme celý kontajner na 100vw, ale vnútorné stĺpce si udržia podiel */
@@ -321,11 +322,18 @@
                 <button onclick="playRadio('https://stream.funradio.sk/milenialky128.mp3', this, 'milenialky')" class="sub-btn"><img src="https://raw.githubusercontent.com/zmobilu/assets/main/LogoFun2000.png"></button>
             </div>
 
+            <div id="rock-links-container" class="ss-hide" style="display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%;">
+                <button onclick="playRadio('https://stream.bauermedia.sk/rock-hi.mp3', this, 'rock')" class="sub-btn"><img src="https://raw.githubusercontent.com/zmobilu/assets/main/LogoAntenaROCK.png"></button>
+                <button onclick="playRadio('https://stream.radiovlna.sk/rockovarepublika-hi.mp3', this, 'rockrepublika')" class="sub-btn"><img src="https://www.radia.sk/static/logos/radios/61_large.png" style="padding: 5px;"></button>
+                <button onclick="playRadio('https://ice.abradio.cz/beat128.mp3', this, 'beat')" class="sub-btn"><img src="https://www.radia.sk/static/logos/radios/142_large.png" style="padding: 4px;"></button>
+                <button onclick="playRadio('https://ice.abradio.cz/casrock128.mp3', this, 'casrock')" class="sub-btn"><img src="https://www.casrock.cz/wp-content/themes/casrock/assets/images/logo.png" style="padding: 6px;"></button>
+            </div>
+
             <div id="spotify-links-container" class="ss-hide" style="display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%;">
                     <button onclick="openSpotify('67q2IYkPShkkWCbV14rRil')" style="background:none; border:none; color:white; font-size:26px;">Janka🎵</button>
-                    <button onclick="openSpotify('63bq913mo2Dv0KIOnnUzam')" style="background:none; border:none; color:white; font-size:24px;">🎸</button>
-                    <button onclick="openSpotify('2xLrXn0HleL3pJvnRWnRcJ')" style="background:none; border:none; color:white; font-size:24px;">🔥</button>
-                    <button onclick="openSpotify('search')" style="background:none; border:none; color:white; font-size:26px;">🔍</button>
+                    <button onclick="openSpotify('63bq913mo2Dv0KIOnnUzam')" style="background:none; border:none; color:white; font-size:24px;">Domko🎸</button>
+                    <button onclick="openSpotify('2xLrXn0HleL3pJvnRWnRcJ')" style="background:none; border:none; color:white; font-size:24px;">Rock🔥</button>
+                    <button onclick="openSpotify('search')" style="background:none; border:none; color:white; font-size:26px;">Vyber 🔍</button>
             </div>
 
             <div id="komerce-links-container" class="ss-hide" style="display: none; flex-direction: row; justify-content: center; gap: 12px; margin-top: 25px; width: 100%;">
@@ -359,7 +367,7 @@ const VOLUME_MAP = {
     'slovensko': 0.3, 'fm': 0.3, 'devin': 0.5, 'litera': 0.5, 'regina': 0.3,
     'fun': 1.0, 'funchill': 0.5, 'funczsk': 0.5, 'fun8090': 0.5, 'milenialky': 0.5,
     'expres': 0.5, 'europa2': 1.0, 'melody': 1.0, 'vlna': 0.5,
-    'blanik': 1.0 // ZMENENÉ: Pridaný Blaník do mapy hlasitostí
+    'blanik': 1.0, 'rock': 0.5, 'rockrepublika': 0.5, 'beat': 0.5, 'casrock': 0.5 // ZMENENÉ: Pridaný Blaník do mapy hlasitostí
 };
 
 function getTempColor(t) {
@@ -472,8 +480,9 @@ function updateClock() {
 }
 
 async function updateWeather(lat = 48.1421, lon = 17.1964) {
-    try {
-        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,precipitation,cloud_cover,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Europe%2FBratislava&wind_speed_unit=kmh&forecast_days=6`);
+    try { 
+        // PRIDANÉ PARAMETRE: sunrise,sunset na konci adresy
+        const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m&hourly=temperature_2m,precipitation,cloud_cover,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=Europe%2FBratislava&wind_speed_unit=kmh&forecast_days=6`);
         const d = await r.json();
         weatherDataBackup = d; 
 
@@ -597,6 +606,15 @@ function vykresliGraf(targetDayIndex) {
     if (!chartContainer || !weatherDataBackup) return;
     chartContainer.innerHTML = ''; 
 
+    // NOVÉ: Dynamický zápis východu a západu slnka pre navolený deň
+    if (weatherDataBackup.daily && weatherDataBackup.daily.sunrise && weatherDataBackup.daily.sunset) {
+        const dayIdx = (targetDayIndex === null) ? 0 : targetDayIndex;
+        if (weatherDataBackup.daily.sunrise[dayIdx] && weatherDataBackup.daily.sunset[dayIdx]) {
+            document.getElementById('sun-rise-val').textContent = weatherDataBackup.daily.sunrise[dayIdx].split('T')[1]; 
+            document.getElementById('sun-set-val').textContent = weatherDataBackup.daily.sunset[dayIdx].split('T')[1];   
+        }
+    }
+
     let temps = [], rain = [], cloud = [], wind = [], labels = [], codes = [];
 
     // PRÍPAD A: Klik na veľkú ikonu počasia (targetDayIndex je null) -> 12 hodín od AKTUÁLNEJ hodiny
@@ -716,6 +734,11 @@ function playRadio(url, element, type) {
         const hlavnyFun = document.querySelector('.btn.fun');
         if (hlavnyFun) hlavnyFun.classList.add('playing');
     }
+    // Pridané: Ak klikneme na akékoľvek pod-rockové rádio, rozsvieti sa hlavné tlačidlo Rock v mriežke
+    if (['rock', 'rockrepublika', 'beat', 'casrock'].includes(type)) {
+        const hlavnyRock = document.querySelector('.btn.rock');
+        if (hlavnyRock) hlavnyRock.classList.add('playing');
+    }
     if (['expres', 'europa2', 'melody', 'vlna', 'blanik'].includes(type)) {
         const hlavnyBlanik = document.getElementById('blanik-main-btn');
         if (hlavnyBlanik) hlavnyBlanik.classList.add('playing');
@@ -741,11 +764,13 @@ function aktualizujSubPanely(type) {
     const funContainer = document.getElementById('fun-links-container');
     const komerceContainer = document.getElementById('komerce-links-container');
     const spotifyContainer = document.getElementById('spotify-links-container');
+    const rockContainer = document.getElementById('rock-links-container'); // PRIDANÉ
 
     if (slovenskoContainer) slovenskoContainer.style.display = ['slovensko', 'fm', 'devin', 'litera', 'regina'].includes(type) ? 'flex' : 'none';
     if (funContainer) funContainer.style.display = ['fun', 'funchill', 'funczsk', 'fun8090', 'milenialky'].includes(type) ? 'flex' : 'none';
     if (komerceContainer) komerceContainer.style.display = ['blanik', 'expres', 'europa2', 'melody', 'vlna'].includes(type) ? 'flex' : 'none';
     if (spotifyContainer) spotifyContainer.style.display = (type === 'spotify') ? 'flex' : 'none';
+    if (rockContainer) rockContainer.style.display = ['rock', 'rockrepublika', 'beat', 'casrock'].includes(type) ? 'flex' : 'none'; // PRidane
 }
     
 function stopRadio() {
@@ -753,11 +778,11 @@ function stopRadio() {
     currentPlayingType = ""; 
     document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('playing'));
     document.querySelectorAll('.sub-btn').forEach(btn => btn.classList.remove('playing')); 
-    const blanikBtn = document.getElementById('blanik-main-btn');
-    if (blanikBtn) blanikBtn.classList.remove('playing');
     
-    aktualizujSubPanely("");
+    // ZJEDNODUŠENÉ: Schováme komplet všetky sub-panely jedným zavolaním
+    aktualizujSubPanely("none");
     resetIdleTimer();
+    
     const radioInfoEl = document.getElementById('ss-radio-info');
     if (radioInfoEl) radioInfoEl.textContent = "";
 }

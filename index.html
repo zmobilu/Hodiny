@@ -292,16 +292,19 @@
                     <span id="weather-location" style="color: #666; font-size: 2.5vw; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 30vw;">---</span>
     
                     <!-- ZMENENÉ: Šírka inputu nastavená na pevných 30% (pôvodne sa rozťahoval cez flex-grow) -->
-                    <input type="text" id="city-search-input" placeholder="Mesto..." 
-                            onpointerdown="event.stopPropagation()"
-                            ontouchstart="event.stopPropagation()"
-                            onkeydown="if(event.key === 'Enter') hladajMesto()"
-                            style="width: 30%; background: #111; color: #fff; border: 1px solid #444; border-radius: 8px; padding: 4px 10px; font-size: 2.2vw; font-family: inherit; outline: none;">
+                    <div style="position: relative; width: 40%; display: flex; gap: 6px;" onpointerdown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
     
-                    <button onclick="hladajMesto()" 
-                            onpointerdown="event.stopPropagation()"
-                            ontouchstart="event.stopPropagation()"
-                            style="background: #222; color: #ff9f0a; border: 1px solid #ff9f0a; padding: 2px 10px; border-radius: 8px; font-size: 2.2vw; font-weight: bold; cursor: pointer; white-space: nowrap;">🔍</button>
+                        <input type="text" id="city-search-input" placeholder="Mesto..." 
+                               onfocus="zobrazHistoriu()"
+                               onblur="setTimeout(skryHistoriu, 200)"
+                                   onkeydown="if(event.key === 'Enter') hladajMesto()"
+                               style="width: 100%; background: #111; color: #fff; border: 1px solid #444; border-radius: 8px; padding: 4px 10px; font-size: 2.2vw; font-family: inherit; outline: none;">
+    
+                        <button onclick="hladajMesto()" style="background: #222; color: #ff9f0a; border: 1px solid #ff9f0a; padding: 2px 10px; border-radius: 8px; font-size: 2.2vw; font-weight: bold; cursor: pointer; white-space: nowrap;">🔍</button>
+
+                        <div id="search-history-box" style="display: none; position: absolute; top: 110%; left: 0; width: 100%; background: #111; border: 1px solid #ff9f0a; border-radius: 8px; padding: 5px; box-sizing: border-box; z-index: 999; flex-direction: column; gap: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.8);">
+                        </div>
+                    </div>
                 
                     <button onclick="zatvorPocasie(event)" style="background: #222; color: #ff9f0a; border: 2px solid #ff9f0a; padding: 2px 15px; border-radius: 8px; font-size: 2.5vw; font-weight: bold; cursor: pointer; white-space: nowrap;">Zatvor</button>
                 </div>
@@ -901,6 +904,14 @@ function zatvorPocasie(e) {
     document.body.classList.remove('weather-details-mode');
     document.querySelectorAll('.mini-item').forEach(box => box.classList.remove('day-box-active'));
 
+    // --- PRIDANÉ: Resetovanie polohy späť na domovskú pri zatvorení ---
+    window.customCityName = null; // Vymaže vyhľadané meno
+    // Ak predtým zbehlo GPS, vráti GPS súradnice, inak natiahne defaultnú Bratislavu
+    const domacaLat = window.navigator.geolocation ? (window.customLat || 48.1421) : 48.1421;
+    const domacaLon = window.navigator.geolocation ? (window.customLon || 17.1964) : 17.1964;
+    updateWeather(domacaLat, domacaLon);
+    // -----------------------------------------------------------------
+    
     if (weatherOpenedFrom === 'screensaver') {
         document.body.classList.add('screensaver-mode');
         clearTimeout(idleTimer);
@@ -944,35 +955,29 @@ async function hladajMesto() {
         return;
     }
     
-    // Očistenie od slovenskej/českej diakritiky, aby API hľadanie prebehlo hladšie
     query = query.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     try {
-        // Zavoláme bezplatnú Geocoding službu Open-Meteo
         const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=sk&format=json`;
         const response = await fetch(url);
         const data = await response.json();
 
         if (!data.results || data.results.length === 0) {
-            alert(`Mesto "${inputEl.value}" sa nepodarilo nájsť. Skús iný názov.`);
+            alert(`Mesto "${inputEl.value}" sa nepodarilo nájsť.`);
             return;
         }
 
         const najdeneMesto = data.results[0];
         const lat = najdeneMesto.latitude;
         const lon = najdeneMesto.longitude;
-        
-        // Vytvoríme pekný formát "Mesto, Krajina" (napr. Košice, SK alebo Praha, CZ)
-        const formatovanyNazov = najdeneMesto.name + (najdeneMesto.country_code ? `, ${najdeneMesto.country_code}` : '');
+        const name = najdeneMesto.name;
 
-        console.log(`Našli sme miesto: ${formatovanyNazov} [${lat}, ${lon}]`);
-
-        // Prepíšeme dočasné súradnice v aplikácii, aby ďalšie automatické aktualizácie držali toto vybrané mesto
+        // Uloženie dát
         window.customLat = lat;
         window.customLon = lon;
+        window.customCityName = name;
 
-        /// PRIDANÉ: Uložíme si presný názov mesta, ktorý vrátil vyhľadávač
-        window.customCityName = najdeneMesto.name;
+        pridajDoHistorie(name, lat, lon);
 
         inputEl.value = '';
         inputEl.blur();
@@ -980,9 +985,64 @@ async function hladajMesto() {
         await updateWeather(lat, lon);
         
     } catch (error) {
-        console.error("Chyba pri geokódovaní mesta:", error);
-        alert("Nepodarilo sa spojiť so serverom na vyhľadávanie miest.");
+        console.error("Chyba pri hľadaní:", error);
+        alert("Nepodarilo sa spojiť so serverom.");
     }
+}
+        // Funkcia na pridanie mesta do histórie (max 3 mestá, bez duplicít)
+function pridajDoHistorie(cityName, lat, lon) {
+    let historia = JSON.parse(localStorage.getItem('kiosk_city_history')) || [];
+    
+    // Odstránime mesto z histórie, ak tam už bolo (aby sa posunulo na prvé miesto)
+    historia = historia.filter(item => item.name.toLowerCase() !== cityName.toLowerCase());
+    
+    // Pridáme na začiatok nové mesto
+    historia.unshift({ name: cityName, lat: lat, lon: lon });
+    
+    // Osekáme históriu na maximálne 3 záznamy
+    if (historia.length > 3) historia.pop();
+    
+    localStorage.setItem('kiosk_city_history', JSON.stringify(historia));
+}
+
+// Zobrazenie boxu s históriou
+function zobrazHistoriu() {
+    const box = document.getElementById('search-history-box');
+    const historia = JSON.parse(localStorage.getItem('kiosk_city_history')) || [];
+    
+    if (!box) return;
+    if (historia.length === 0) {
+        box.style.display = 'none';
+        return;
+    }
+    
+    // Vygenerujeme klikateľné riadky pre uložené mestá
+    box.innerHTML = '<div style="font-size: 1.5vw; color: #666; padding: 2px 5px; text-transform: uppercase;">Posledné hľadané:</div>';
+    
+    historia.forEach(mesto => {
+        const row = document.createElement('div');
+        row.style.cssText = "color: #fff; font-size: 2vw; padding: 6px 8px; cursor: pointer; border-radius: 4px; background: #222; text-align: left;";
+        row.textContent = mesto.name;
+        
+        // Po kliknutí na položku z histórie okamžite načítame počasie
+        row.onpointerdown = async (e) => {
+            e.stopPropagation();
+            window.customLat = mesto.lat;
+            window.customLon = mesto.lon;
+            window.customCityName = mesto.name;
+            await updateWeather(mesto.lat, mesto.lon);
+            box.style.display = 'none';
+        };
+        box.appendChild(row);
+    });
+    
+    box.style.display = 'flex';
+}
+
+// Skrytie boxu histórie (volá sa s timeoutom po opustení inputu)
+function skryHistoriu() {
+    const box = document.getElementById('search-history-box');
+    if (box) box.style.display = 'none';
 }
 
 // Volanie všetkých inicializačných funkcií na úplnom konci kódu

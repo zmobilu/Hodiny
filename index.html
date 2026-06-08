@@ -195,10 +195,7 @@ body.screensaver-mode .clock-section {
         /* Skryť info o rádiu, keď je spustený detailný prehľad počasia */
         body.weather-details-mode #ss-radio-info { display: none !important; }
 
-        .ss-right-col { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between !important; 
+        .ss-right-col { display: flex; flex-direction: column; justify-content: space-between !important; 
             align-items: center; 
             background: #000; 
             padding: 0; 
@@ -212,17 +209,7 @@ body.screensaver-mode .clock-section {
         .hum-val { font-size: 6.5vw; font-weight: 200; color: #aaa; letter-spacing: 1px; opacity: 0.8; white-space: nowrap; }
 
         #mini-forecast-strip { display: flex; flex-direction: row !important; flex-wrap: nowrap; justify-content: space-around; width: 100%; border-top: 1px solid #222; padding-top: 1vh; margin-bottom: 3.5vh; }
-        .mini-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            width: 48%; 
-            cursor: pointer;
-            border: 1px solid transparent; 
-            border-radius: 12px; 
-            padding: 4px 0;
-            transition: all 0.2s;
-        }
+        .mini-item { display: flex; flex-direction: column; align-items: center; width: 48%; cursor: pointer;  border: 1px solid transparent; border-radius: 12px; padding: 4px 0; transition: all 0.2s; }
         .mini-day { font-size: 1.8vw; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
         .mini-icon { font-size: 6vw; }
         .mini-temp { font-size: 4.5vw; font-weight: 300; color: #fff; white-space: nowrap; }
@@ -632,7 +619,8 @@ function vykresliGraf(targetDayIndex) {
 
     let temps = [], rain = [], cloud = [], wind = [], labels = [], codes = [];
 
-    if (targetDayIndex === null || targetDayIndex === 0) {
+    // PRÍPAD A: Klik na veľkú ikonu počasia (targetDayIndex je null) -> 12 hodín od AKTUÁLNEJ hodiny
+    if (targetDayIndex === null) {
         const currentHourIndex = new Date().getHours();
         temps = weatherDataBackup.hourly.temperature_2m.slice(currentHourIndex, currentHourIndex + 12);
         rain = (weatherDataBackup.hourly.precipitation || weatherDataBackup.hourly.rain || []).slice(currentHourIndex, currentHourIndex + 12);
@@ -643,7 +631,9 @@ function vykresliGraf(targetDayIndex) {
         for (let idx = 0; idx < 12; idx++) {
             labels.push(idx === 0 ? 'Teraz' : String((currentHourIndex + idx) % 24));
         }
-    } else {
+    } 
+    // PRÍPAD B: Klik na malé dni vrátane DNES (index 0, 1, 2...) -> Celý kalendárny deň od polnoci v 2-hodinových krokoch
+    else {
         const startHourOfTargetDay = targetDayIndex * 24;
         for (let step = 0; step < 12; step++) {
             const hourOffset = startHourOfTargetDay + (step * 2); 
@@ -653,7 +643,7 @@ function vykresliGraf(targetDayIndex) {
             wind.push((weatherDataBackup.hourly.wind_speed_10m || [])[hourOffset]);
             codes.push((weatherDataBackup.hourly.weather_code || [])[hourOffset]);
             
-            labels.push(String(step * 2));
+            labels.push(String(step * 2)); // Popisky stĺpcov: 0, 2, 4, 6 ... 22
         }
     }
 
@@ -665,13 +655,12 @@ function vykresliGraf(targetDayIndex) {
         if (temp === undefined) return;
         const roundedTemp = Math.round(temp);
         
-        // Ešte o niečo viac stlačíme stĺpce (koeficient 35) a základňu dáme na 8, aby klesli nižšie
+        // Zachovaný váš upravený vzorec pre stlačenie stĺpcov nižšie
         const pct = ((temp - minGraphTemp) / tempRange) * 52 + 12;
         
         const rainVal = rain[idx] ? parseFloat(rain[idx]) : 0;
         const rainHtml = rainVal > 0 ? `<span class="chart-rain-info">💧${rainVal.toFixed(1)}</span>` : `<span class="chart-rain-info"></span>`;
         
-        // Získanie kódu počasia pre konkrétny stĺpec
         const cCode = codes[idx] !== undefined ? codes[idx] : 0;
         const iconClass = WEATHER_CODES[cCode] || 'fa-cloud';
         const iconColor = WEATHER_COLORS[cCode] || '#aaa';
@@ -687,7 +676,6 @@ function vykresliGraf(targetDayIndex) {
         const column = document.createElement('div');
         column.style.cssText = `display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; width: 7.8%; flex-shrink: 0;`;
         
-        // Poskladané kompaktnejšie HTML s mini ikonou medzi zrážkami a teplotou
         column.innerHTML = `
             ${rainHtml}
             ${weatherIconHtml}
@@ -848,13 +836,22 @@ function otvorPocasie(e, zdroj = 'radio') {
     if (e) { e.stopPropagation(); if (e.cancelable) e.preventDefault(); }
     weatherOpenedFrom = zdroj;
     
-    document.querySelectorAll('.forecast-day-box').forEach(box => { box.classList.remove('day-box-active'); });
-    vykresliGraf(null);
+    // Na začiatok vyčistíme aktívne oranžové rámčeky zo všetkých buniek
+    document.querySelectorAll('.forecast-day-box, .mini-item').forEach(box => { 
+        box.classList.remove('day-box-active'); 
+    });
     
     document.body.classList.add('weather-details-mode');
     
-    document.querySelectorAll('.mini-item').forEach(box => box.classList.remove('day-box-active'));
-    document.querySelector('.mini-item:nth-child(1)').classList.add('day-box-active');
+    // ZISTENIE DUPLICITY: Ak sme klikli na veľkú hlavnú ikonu šetriča (id="ss-weather-trigger")
+    if (e && e.currentTarget && e.currentTarget.id === 'ss-weather-trigger') {
+        vykresliGraf(null); // Vykreslí iba 12h trend odteraz, žiadny malý deň nedostane rámček
+    } else {
+        // Ak klikneme na hocičo iné (napríklad malé políčko DNES), spustí sa ucelený kalendárny deň
+        vykresliGraf(0);
+        const dnesPolicko = document.querySelectorAll('.mini-item')[0];
+        if (dnesPolicko) dnesPolicko.classList.add('day-box-active');
+    }
     
     clearTimeout(pocasieTimer);
     pocasieTimer = setTimeout(() => { zatvorPocasie(); }, 30000); 

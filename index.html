@@ -83,16 +83,7 @@
 
         .sub-btn.playing { border: 2px solid #ff9f0a !important; }
         
-       .buttons-section { 
-    width: 35%; 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    grid-template-rows: 0.6fr 1fr 1fr 1fr; /* ZMENENÉ: Pridaný štvrtý riadok s pomerom 1fr */
-    gap: 8px; 
-    padding: 10px; 
-    background: #050505; 
-    box-sizing: border-box;
-}
+        .buttons-section { width: 35%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 0.6fr 1fr 1fr 1fr; /* ZMENENÉ: Pridaný štvrtý riadok s pomerom 1fr */gap: 8px; padding: 10px; background: #050505; box-sizing: border-box;}
         
         .page-group { display: contents; }
         .page-group.hidden { display: none !important; }
@@ -116,24 +107,12 @@
         body.screensaver-mode .ss-only { display: flex !important; }
         
         /* Pri šetriči roztiahneme celý kontajner na 100vw, ale vnútorné stĺpce si udržia podiel */
-/* Úprava pre šetrič obrazovky */
-body.screensaver-mode .clock-section { 
-    width: 100vw; 
-    border: none; 
-    display: flex; 
-    flex-direction: row; /* Zmenené z row-reverse na row, aby počasie vľavo (35%) sedelo presne nad rádiom */
-    align-items: stretch; 
-}
+        /* Úprava pre šetrič obrazovky */
+        body.screensaver-mode .clock-section { width: 100vw; border: none; display: flex; flex-direction: row; /* Zmenené z row-reverse na row, aby počasie vľavo (35%) sedelo presne nad rádiom */ align-items: stretch; }
 
-        .ss-left-col { 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: flex-start !important; 
-            align-items: center; 
-            padding: 0; 
-            width: 35%; /* ZMENENÉ: Zmenšené na 35%, aby to sedelo presne nad rádiom */
-            /* ODSTRÁNENÉ: border-left, riadok nižšie ho pridáva na správnu stranu */
-        }
+        .ss-left-col { display: flex; flex-direction: column; justify-content: flex-start !important; align-items: center; padding: 0; width: 35%; }
+         /* ZMENENÉ: Zmenšené na 35%, aby to sedelo presne nad rádiom ODSTRÁNENÉ: border-left, riadok nižšie ho pridáva na správnu stranu */
+        
         body.screensaver-mode #time { font-size: 30vw; transform: scaleY(1.30); letter-spacing: -1vw; margin-top: 8vh; }
         
         #date-block { 
@@ -235,7 +214,8 @@ body.screensaver-mode .clock-section {
             color: #fff !important; 
             text-transform: uppercase !important; 
             letter-spacing: 1px !important;
-            margin-bottom: 2px !important;
+            margin-bottom: 3px !important; /* Mierne zväčšené na 4px pre krajší odstup od ikony */
+            display: inline-block; /* Poistka pre správne fungovanie horného a dolného odsadenia */
         }
         .forecast-day-icon { 
             font-size: 6vw !important; 
@@ -285,12 +265,12 @@ body.screensaver-mode .clock-section {
       
                 <div id="mini-forecast-strip">
                     <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 0)">
-                        <span id="fc0-day" class="mini-day">Dnes</span>
+                        <span id="fc0-day" class="forecast-day-label">Dnes</span>
                         <i id="fc0-icon" class="fas fa-cloud mini-icon"></i>
                         <span id="fc0-temp" class="mini-temp">-- / --</span>
                     </div>
                     <div class="mini-item" onpointerdown="otvorPocasie(event, 'screensaver'); prepniDenGrafu(event, 1)">
-                        <span id="fc1-day" class="mini-day">Zajtra</span>
+                        <span id="fc1-day" class="forecast-day-label">Zajtra</span>
                         <i id="fc1-icon" class="fas fa-cloud mini-icon"></i>
                         <span id="fc1-temp" class="mini-temp">-- / --</span>
                     </div>

@@ -527,7 +527,7 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
         const locationEl = document.getElementById('weather-location-main');
         if (locationEl) {
             if (window.customCityName) {
-                locationEl.textContent = window.customCityName;
+                locationEl.textContent = `SK / ${window.customCityName}`;
             } else if (d.timezone && d.timezone.includes('/')) {
                 locationEl.textContent = d.timezone.split('/')[1].replace(/_/g, ' ');
             } else {
@@ -1050,28 +1050,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const isSmalliPhone = (window.innerWidth <= 375 && /iPhone/.test(navigator.userAgent));
     if (isSmalliPhone) {
         const searchRow = document.getElementById('search-row');
-        if (searchRow) {
-            searchRow.classList.add('hide-on-iphone');
-        }
+        if (searchRow) searchRow.classList.add('hide-on-iphone');
     }
 
-    // 2. Obsluha kliknutí
+    // 2. Prepínanie šetriča cez klik na hodiny
     const timeEl = document.getElementById('time');
-    const weatherEl = document.getElementById('ss-weather-trigger');
-    const grafContainer = document.getElementById('weather-details-top-inline');
-
     if (timeEl) {
         timeEl.addEventListener('pointerdown', (e) => {
-            klikNaHodiny(e);
+            e.stopPropagation();
+            document.body.classList.toggle('screensaver-mode');
+            // Ak ideme do režimu rádia, musíme resetovať časovač nečinnosti
+            if (!document.body.classList.contains('screensaver-mode')) {
+                resetIdleTimer();
+            } else {
+                clearTimeout(idleTimer);
+            }
         });
     }
 
+    // 3. Počasie trigger
+    const weatherEl = document.getElementById('ss-weather-trigger');
     if (weatherEl) {
         weatherEl.addEventListener('pointerdown', (e) => {
             otvorPocasie(e, 'screensaver');
         });
     }
 
+    // 4. Zatvorenie detailov počasia kliknutím mimo tlačidiel
+    const grafContainer = document.getElementById('weather-details-top-inline');
     if (grafContainer) {
         grafContainer.addEventListener('pointerdown', (e) => {
             if (document.body.classList.contains('weather-details-mode') && !e.target.closest('button')) {
@@ -1080,16 +1086,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Volanie všetkých inicializačných funkcií na úplnom konci kódu
-updateNameday();
-setInterval(updateNameday, 3600000);
-
-setInterval(updateClock, 1000); 
-updateClock();
-
-inicializujPocasie();
-
+    // Inicializácia
+    updateNameday();
+    setInterval(updateNameday, 3600000);
+    setInterval(updateClock, 1000); 
+    updateClock();
+    inicializujPocasie();
 </script>
 </body>
 </html>

@@ -176,8 +176,8 @@
             width: 65%; 
             border-left: 1px solid #1a1a1a; 
         }
-        .current-weather-group { margin-top: 4vh; text-align: center; display: flex; flex-direction: column; align-items: center;}
-        .meteo-icon-large { font-size: 15vw; margin-bottom: 5px; }
+        .current-weather-group { margin-top: 1vh; text-align: center; display: flex; flex-direction: column; align-items: center;}
+        .meteo-icon-large { font-size: 12vw; margin-bottom: 5px; }
         .sub-info-row { display: flex; justify-content: center; gap: 14px; width: 100%; transform: scaleX(1.2) scaleY(0.8); transform-origin: center; margin-top: -2px; }
         .temp-val { font-size: 14vw; font-weight: 300; line-height: 0.9; color: #fff; }
         .hum-val { font-size: 6.5vw; font-weight: 200; color: #aaa; letter-spacing: 1px; opacity: 0.8; white-space: nowrap; }
@@ -245,7 +245,7 @@
         <div class="ss-left-col ss-only">
             <div id="ss-weather-trigger" style="cursor: pointer; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
                 <div class="current-weather-group">
-                    <div id="weather-location-main" style="font-size: 3.2vw; font-weight: 500; color: #fff; margin-bottom: 1vh; text-transform: uppercase; line-height: 1.1; text-align: center; max-width: 30vw; word-wrap: break-word;">---</div>
+                    <div id="weather-location-main" style="font-size: 2.5vw; font-weight: 500; color: #fff; margin-bottom: 1vh; text-transform: uppercase; line-height: 1.1; text-align: center; max-width: 30vw; word-wrap: break-word;">---</div>
                     <i id="weather-icon-main" class="fas fa-sun meteo-icon-large"></i>
                     <div class="temp-val" id="outdoor-temp">--°C</div>
             
@@ -503,16 +503,16 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
         const d = await r.json();
         weatherDataBackup = d; 
 
-        // --- ÚPRAVA: ZOBRAZENIE MESTA S TEXTOM "SK /" VĽAVO ---
+        // --- ÚPRAVA: ZOBRAZENIE MESTA ---
         const locationMainEl = document.getElementById('weather-location-main');
         if (locationMainEl) {
             if (window.customCityName) {
-                locationMainEl.innerHTML = `<span style="font-size: 0.7em; color: #aaa; font-weight: 300;">SK / </span><br>${window.customCityName.toUpperCase()}`;
+                locationMainEl.innerHTML = `${window.customCityName.toUpperCase()}`;
             } else if (d.timezone && d.timezone.includes('/')) {
                 const nazovMesta = d.timezone.split('/')[1].replace(/_/g, ' ');
-                locationMainEl.innerHTML = `<span style="font-size: 0.7em; color: #aaa; font-weight: 300;">SK / </span><br>${nazovMesta.toUpperCase()}`;
+                locationMainEl.innerHTML = `${nazovMesta.toUpperCase()}`;
             } else {
-                locationMainEl.innerHTML = `<span style="font-size: 0.7em; color: #aaa; font-weight: 300;">SK / </span><br>${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+                locationMainEl.innerHTML = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
             }
         }
 

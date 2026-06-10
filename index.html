@@ -613,7 +613,7 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
 }
 
 function inicializujPocasie() {
-    // 1. KROK: Okamžite a bez čakania natiahni Bratislavu (Ružinov)
+    // Okamžite natiahni Bratislavu (Ružinov)
     updateWeather(48.1421, 17.1964);
 
     // Nastavíme bezpečný interval na pozadí pre Bratislavu (poistka)
@@ -622,27 +622,6 @@ function inicializujPocasie() {
         const aktualnyLon = window.customLon || 17.1964;
         updateWeather(aktualnyLat, aktualnyLon);
     }, 600000);
-
-    const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    if (!isSecure) {
-        console.log("Nezabezpečený protokol, končíme pri defaultnej Bratislave.");
-        return;
-    }
-
-    // 2. KROK: Skúsime na pozadí zistiť presnejšiu polohu (ak sme na HTTPS)
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                window.customLat = position.coords.latitude;
-                window.customLon = position.coords.longitude;
-                updateWeather(window.customLat, window.customLon);
-            },
-            (error) => {
-                console.log("GPS nedostupné alebo zamietnuté, zostáva Bratislava. Dôvod:", error.message);
-            },
-            { timeout: 3000, maximumAge: 60000 }
-        );
-    }
 }
 
 function vykresliGraf(targetDayIndex) {

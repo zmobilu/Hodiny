@@ -34,10 +34,14 @@
         
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
                   transform: scaleY(1.05); transform-origin: center; cursor: pointer; }
-        .hours-part { font-weight: 500; color: #FFFE91; } 
-        .minutes-part { font-weight: 500; color: #FFFE91; margin-left: 5px; } 
+        .hours-part { font-weight: 500; color: #FFFfff; } 
+        .minutes-part { font-weight: 500; color: #FFFfff; margin-left: 5px; } 
         .red-digit { color: #eb0028 !important; } 
         .blue-digit { color: #307CEB !important; }
+        
+        /* Nový štýl pre blikajúcu dvojbodku */
+        .colon-part { font-weight: 500; color: #6BF242; margin-left: 2px; animation: blinker 1s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
         
         /* Štýl pre info riadok v rádio režime */
         .radio-info-wrapper { display: flex;  align-items: center;  gap: 12px; margin-top: 10px;  font-size: 3.5vw; font-weight: 300; color: #aaa;}
@@ -275,7 +279,7 @@
         
             <div id="time" class="weather-details-hide">
                 <span id="h-part" class="hours-part">00</span>
-                <span id="m-part" class="minutes-part">00</span>
+                <span class="colon-part">:</span> <span id="m-part" class="minutes-part">00</span>
             </div>
             
             <div id="ss-radio-info" class="weather-details-hide"></div>

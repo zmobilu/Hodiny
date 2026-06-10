@@ -818,6 +818,12 @@ function stopRadio() {
 function showSpotify() {
     // Vypne bežné rádio, no neodstráni vizuálny panel
     audio.pause(); audio.src = "";
+
+    // Zatvoríme otvorený iframe ak predtým existoval
+    const container = document.getElementById('integrated-spotify-container');
+    const frame = document.getElementById('spotify-player-frame');
+    if (container) container.style.display = 'none';
+    if (frame) frame.src = "";
     
     currentPlayingType = "spotify";
     aktualizujSubPanely("spotify");
@@ -826,22 +832,31 @@ function showSpotify() {
     const spotifyBtn = document.querySelector('.spotify');
     if (spotifyBtn) spotifyBtn.classList.add('playing');
     
-    // Načítame predvolene search, no gombíky sub-panelu zostanú čisté
-    playIntegratedSpotify('search', null);
     resetIdleTimer();
 }
 
 function playIntegratedSpotify(target, element) {
     audio.pause(); audio.src = ""; // Stop rádio
     
+    // Ošetrenie špeciálne pre ikonu lupy/vyhľadávania, aby otvorila Edge okno
+    if (target === 'https://open.spotify.com/') {
+        const extUrl = "https://open.spotify.com/search";
+        try {
+            // Skúsi vynútiť otvorenie v Microsoft Edge pomocou URL schémy
+            window.open("microsoft-edge:" + extUrl, "_blank");
+        } catch(e) {
+            // Záložné riešenie ak protokol zlyhá
+            window.open(extUrl, "_blank");
+        }
+        return;
+    }
+
     const container = document.getElementById('integrated-spotify-container');
     const frame = document.getElementById('spotify-player-frame');
     if (!container || !frame) return;
     
-    // Vyčistíme staré vysvietenie pod-tlačidiel v Spotify skupine
     document.querySelectorAll('#spotify-links-container .sub-btn').forEach(btn => btn.classList.remove('playing'));
     
-    // Rozsvietime konkrétny sub-gombík, ak naň bolo reálne kliknuté
     if (element) {
         element.classList.add('playing');
     }

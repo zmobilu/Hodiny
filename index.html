@@ -86,8 +86,8 @@
         .sub-btn.playing { border: 2px solid #ff9f0a !important; }
         
         .buttons-section { width: 35%; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 0.6fr 1fr 1fr 1fr; gap: 8px; padding: 10px; background: #050505; box-sizing: border-box;}
-        /* --- DYNAMICKÉ PRISPÔSOBENIE PRE TABLETY A NOTEBOOKY --- */
-@media (min-width: 800px) {
+       /* --- DYNAMICKÉ PRISPÔSOBENIE PRE TABLETY A NOTEBOOKY --- */
+        @media (min-width: 800px) {
     /* 1. Kompresia ľavého panelu pre tlačidlá rádia */
     .buttons-section { 
         width: 24%; 
@@ -109,7 +109,31 @@
         width: 76%; 
     }
 
-    /* 3. Vizuálne zväčšenie hlavných ikon v gombíkoch rádia */
+    /* 3. KOMPRESIA TEXTOV A IKON V POČASÍ (Aby sa neprekrývali) */
+    #weather-location-main { 
+        font-size: 1.8vw !important; /* Zmenšené z 2.5vw */
+    }
+    .meteo-icon-large { 
+        font-size: 8vw !important; /* Zmenšené z 12vw */
+        margin-bottom: 0px !important;
+    }
+    .temp-val { 
+        font-size: 9vw !important; /* Zmenšené z 14vw - toto zastaví pretekanie */
+    }
+    .hum-val { 
+        font-size: 4.5vw !important; /* Zmenšené z 6.5vw */
+    }
+    .mini-day { 
+        font-size: 1.3vw !important; /* Zmenšené z 1.8vw */
+    }
+    .mini-icon { 
+        font-size: 4vw !important; /* Zmenšené z 6vw */
+    }
+    .mini-temp { 
+        font-size: 3vw !important; /* Zmenšené z 4.5vw */
+    }
+
+    /* 4. Vizuálne zväčšenie hlavných ikon v gombíkoch rádia */
     .vypni i { font-size: 5.5vw !important; }
     .spotify i { font-size: 5vw !important; }
     .btn.cro i { font-size: 5vw !important; }

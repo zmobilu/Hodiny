@@ -125,16 +125,22 @@
         body.screensaver-mode #time { font-size: 30vw; transform: scaleY(1.20); letter-spacing: -1vw; margin-top: 8vh; } /* --- 1.30 --- */
         
         #date-block { 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: space-between; 
-            width: 100%; 
-            box-sizing: border-box; 
-            margin-top: auto; 
-            margin-bottom: 3.5vh; 
-            padding-left: 2vw; 
-            padding-right: 0.5vw; 
-        }
+        display: flex; 
+        align-items: flex-end; 
+        justify-content: space-between; 
+        width: 100%; 
+        box-sizing: border-box; 
+        margin-top: auto; 
+        margin-bottom: 3.5vh; 
+        padding-left: 0 !important;  /* Úplne na nulu */
+        padding-right: 2vw;  
+    }
+
+        /* Pridaj tento štýl pre dokonalé zarovnanie vetra k okraju */
+        #wind-block {
+        align-items: flex-start !important; /* Zmenené z center na flex-start */
+        padding-left: 5px; /* Minimálna estetická rezerva, aby to nebolo úplne nalepené na skle displeja */
+    }
 
         .ss-separator { color: #222; font-size: 5.5vw; font-weight: 200; line-height: 1; position: relative; top: 0.5vw; }
         #date-display { line-height: 1; color: #ffffff; position: relative; top: 1.4vw; margin-right: 2px; }
@@ -382,21 +388,19 @@
                 <button onclick="playRadio('https://stream.sunshine-live.de/melodic_beats/mp3-192/', this, 'melodic')" class="sub-btn" style="color:#fff; font-weight:bold; font-size:14px; background:#111;">melodic</button>
                 <button onclick="playRadio('https://stream.sunshine-live.de/hardtechno/mp3-192', this, 'h-techno')" class="sub-btn" style="color:#fff; font-weight:bold; font-size:14px; background:#111;">HM-h-techno</button>
                 <button onclick="playRadio('https://stream.sunshine-live.de/drumbass/mp3-192', this, 'Drumcode')" class="sub-btn" style="color:#fff; font-weight:bold; font-size:14px; background:#111;">Drumcode 🔊</button>
-           </div>
-
+            </div>
+            
             <div id="date-block" class="ss-only">
-                <div class="ss-date-wrapper weather-details-hide">
-                    <span id="date-display" class="ss-date">--.--.</span>
-                    <span id="day-display" class="ss-day">---</span>
+                <div id="wind-block" class="weather-details-hide" style="display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; margin-bottom: 0.2vh;">
+                    <i id="wind-icon" class="fas fa-arrow-up" style="font-size: 5.5vw; color: #aaa; transition: transform 0.5s ease-in-out; transform-origin: center; margin-bottom: 1.5vw; margin-left: 1vw;"></i>
+                    <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- km/h</span>
                 </div>
-                
+
                 <div id="extended-forecast-container" class="weather-details-only" style="display: none; justify-content: space-between; gap: 6px; width: 100%; height: 20vh; padding-right: 1.5vw; box-sizing: border-box;"></div> 
                 
-                <span class="ss-separator weather-details-hide">|</span>
-                
-                <div id="wind-block" class="weather-details-hide" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end; margin-bottom: 0.2vh;">
-                    <i id="wind-icon" class="fas fa-arrow-up" style="font-size: 5.5vw; color: #aaa; transition: transform 0.5s ease-in-out; transform-origin: center; margin-bottom: 3.0vw;"></i>
-                    <span id="wind-speed" style="font-size: 4.5vw; font-weight: 400; color: #fff; white-space: nowrap; line-height: 1;">-- km/h</span>
+                <span class="ss-separator weather-details-hide" style="display: none !important;">|</span> <div class="ss-date-wrapper weather-details-hide">
+                    <span id="day-display" class="ss-day" style="margin-right: 1.5vw; text-align: right;">---</span>
+                    <span id="date-display" class="ss-date">--.--.</span>
                 </div>
             </div>
         </div>

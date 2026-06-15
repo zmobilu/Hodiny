@@ -550,7 +550,7 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
         const d = await r.json();
         weatherDataBackup = d; 
 
-        const locationMainEl = document.getElementById('weather-location-main');
+       const locationMainEl = document.getElementById('weather-location-main');
         if (locationMainEl) {
             let zobrazovanyNazov = "";
             if (window.customCityName) {
@@ -561,11 +561,11 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
                 zobrazovanyNazov = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
             }
             
-            // OPRAVENÁ URL: Nová funkčná adresa priamo na meteorologické modely Open-Meteo
-            const mapaUrl = `https://open-meteo.com/en/features/meteo-plus?latitude=${lat}&longitude=${lon}#map`;
+            // SPRÁVNA MAPOVÁ URL
+            const mapaUrl = `https://maps.open-meteo.com/?latitude=${lat}&longitude=${lon}&zoom=6`;
             
-            // OŠETRENIE DOTYKU: stopImmediatePropagation v evente úplne odreže widget od otvárania grafu
-            locationMainEl.innerHTML = `<a href="${mapaUrl}" target="_blank" onpointerdown="event.stopPropagation(); event.stopImmediatePropagation();" style="color: #ff9f0a; text-decoration: none; border-bottom: 1px dashed #ff9f0a; font-weight: 600; display: inline-block; position: relative; z-index: 9999;">${zobrazovanyNazov}</a>`;
+            // OŠETRENIE DOTYKU: pointerdown otvorí okno a kompletne zabije akúkoľvek inú akciu widgetu
+            locationMainEl.innerHTML = `<span onpointerdown="event.stopPropagation(); event.preventDefault(); window.open('${mapaUrl}', '_blank');" style="color: #ff9f0a; text-decoration: none; border-bottom: 1px dashed #ff9f0a; font-weight: 600; cursor: pointer; display: inline-block; position: relative; z-index: 9999;">${zobrazovanyNazov}</span>`;
         }
 
         const topLocationEl = document.getElementById('weather-location-topbar');

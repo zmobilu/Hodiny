@@ -560,10 +560,12 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
             } else {
                 zobrazovanyNazov = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
             }
+            
             // Odkaz na meteorologickú mapu Open-Meteo vycentrovanú na aktuálne súradnice
             const mapaUrl = `https://open-meteo.com/en/weather-maps?latitude=${lat}&longitude=${lon}&zoom=7`;
-            // Obalíme text do čistého odkazu, ktorý sa otvorí v novom tabe (_blank)
-            locationMainEl.innerHTML = `<a href="${mapaUrl}" target="_blank" style="color: #fff; text-decoration: none; border-bottom: 1px dashed #555;">${zobrazovanyNazov}</a>`;
+            
+            // Pridaná oranžová farba (#ff9f0a) a stopPropagation, aby kliknutie neotváralo podrobné počasie
+            locationMainEl.innerHTML = `<a href="${mapaUrl}" target="_blank" onpointerdown="event.stopPropagation()" style="color: #ff9f0a; text-decoration: none; border-bottom: 1px dashed #ff9f0a; font-weight: 600;">${zobrazovanyNazov}</a>`;
         }
 
         const topLocationEl = document.getElementById('weather-location-topbar');

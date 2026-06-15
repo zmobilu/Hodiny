@@ -552,14 +552,18 @@ async function updateWeather(lat = 48.1421, lon = 17.1964) {
 
         const locationMainEl = document.getElementById('weather-location-main');
         if (locationMainEl) {
+            let zobrazovanyNazov = "";
             if (window.customCityName) {
-                locationMainEl.innerHTML = `${window.customCityName.toUpperCase()}`;
+                zobrazovanyNazov = window.customCityName.toUpperCase();
             } else if (d.timezone && d.timezone.includes('/')) {
-                const nazovMesta = d.timezone.split('/')[1].replace(/_/g, ' ');
-                locationMainEl.innerHTML = `${nazovMesta.toUpperCase()}`;
+                zobrazovanyNazov = d.timezone.split('/')[1].replace(/_/g, ' ').toUpperCase();
             } else {
-                locationMainEl.innerHTML = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+                zobrazovanyNazov = `${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
             }
+            // Odkaz na meteorologickú mapu Open-Meteo vycentrovanú na aktuálne súradnice
+            const mapaUrl = `https://open-meteo.com/en/weather-maps?latitude=${lat}&longitude=${lon}&zoom=7`;
+            // Obalíme text do čistého odkazu, ktorý sa otvorí v novom tabe (_blank)
+            locationMainEl.innerHTML = `<a href="${mapaUrl}" target="_blank" style="color: #fff; text-decoration: none; border-bottom: 1px dashed #555;">${zobrazovanyNazov}</a>`;
         }
 
         const topLocationEl = document.getElementById('weather-location-topbar');

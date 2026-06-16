@@ -430,6 +430,7 @@ let currentPlayingType = "";
 let weatherOpenedFrom = ""; 
 let songTitleInterval = null;
         
+// 1. KROK: Úplne nový objekt API adries (AllOrigins formát)
 const RADIO_API_URLS = {
     'fun': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
     'funchill': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
@@ -450,6 +451,7 @@ const RADIO_API_URLS = {
     'casrock': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://casrock.cz/wp-json/wp/v2/now-playing')
 };
 
+// 2. KROK: Kompletne upravená funkcia na parsovanie dát z novej proxy
 async function fetchCurrentSong(streamName) {
     const ssRadioInfoEl = document.getElementById('ss-radio-info');
     if (!ssRadioInfoEl) return;
@@ -464,20 +466,19 @@ async function fetchCurrentSong(streamName) {
     const krasnyNazov = stationNames[streamName] || streamName.toUpperCase();
     const apiUrl = RADIO_API_URLS[streamName];
 
-    // Ak pre rádio nemáme API, zobrazíme len čistý názov stanice
     if (!apiUrl) {
         ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
         return;
     }
 
     try {
-       const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl);
         if (!response.ok) throw new Error('API nedostupné');
         const proxyData = await response.json();
         
-        // AllOrigins vracia dáta ako string v poľe .contents, takto ich bezpečne naparsujeme na objekt
+        // AllOrigins posiela čisté dáta ako text v premennej .contents, tu ich premeníme na čitateľný objekt
+        if (!proxyData.contents) throw new Error('Proxy nevrátila obsah');
         let data = JSON.parse(proxyData.contents);
-        }
         
         let artist = "";
         let song = "";

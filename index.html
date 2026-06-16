@@ -430,24 +430,119 @@ let currentPlayingType = "";
 let weatherOpenedFrom = ""; 
 let songTitleInterval = null;
         
+// Mapovanie API zdrojov pre jednotlivé stanice
+const RADIO_API_URLS = {
+    // FUN RÁDIO funguje na GitHub Pages priamo (netreba proxy)
+    'fun': 'https://api.funradio.sk/public/now-playing/current',
+    'funchill': 'https://api.funradio.sk/public/now-playing/current',
+    'funczsk': 'https://api.funradio.sk/public/now-playing/current',
+    'fun8090': 'https://api.funradio.sk/public/now-playing/current',
+    'milenialky': 'https://api.funradio.sk/public/now-playing/current',
+    // RÁDIO SLOVENSKO (Ak bez proxy nejde, pridaj ju pred link)
+    'slovensko': 'https://cors-proxy.htmldriven.com/?url=https://api.rtvs.sk/xml/playlist.json?channel=1',
+    // BAUER MEDIA (Expres, Europa 2, Melody)
+    'expres': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/expres/current.json',
+    'europa2': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/europa2/current.json',
+    'melody': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/melody/current.json',
+    // RÁDIO VLNA
+    'vlna': 'https://cors-proxy.htmldriven.com/?url=https://api.radiovlna.sk/playlist/current.json',
+    // RÁDIO BLANÍK (Aktuálna skladba z MC playlistu)
+    'blanik': 'https://cors-proxy.htmldriven.com/?url=https://api.api-mc.cz/public/v1/playlist/blanik/current',
+    // ANTÉNA ROCK (Bauer Media)
+    'rock': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/rock/current.json',
+    // RÁDIO BEAT (AB Radio)
+    'beat': 'https://cors-proxy.htmldriven.com/?url=https://www.radiobeat.cz/cs/sys/playlist-json.shtml',
+    // RÁDIO ČAS ROCK
+    'casrock': 'https://cors-proxy.htmldriven.com/?url=https://casrock.cz/wp-json/wp/v2/now-playing'
+};
+
 async function fetchCurrentSong(streamName) {
     const ssRadioInfoEl = document.getElementById('ss-radio-info');
     if (!ssRadioInfoEl) return;
 
-    // Mapovanie ID streamov na krasne cele nazvy pre tvoj šetrič
     const stationNames = {
-        'fun': 'FUN RÁDIO LIVE',
-        'funchill': 'FUN RÁDIO CHILL',
-        'funczsk': 'FUN RÁDIO CZ-SK',
-        'fun8090': 'FUN RÁDIO 80-90',
-        'milenialky': 'FUN MILENIÁLKY'
+        'slovensko': 'RÁDIO SLOVENSKO', 'fm': 'RÁDIO _FM', 'devin': 'RÁDIO DEVÍN', 'litera': 'RÁDIO LITERA', 'regina': 'RÁDIO REGINA',
+        'fun': 'FUN RÁDIO LIVE', 'funchill': 'FUN CHILL', 'funczsk': 'FUN CZ-SK', 'fun8090': 'FUN 80-90', 'milenialky': 'FUN MILENIÁLKY',
+        'expres': 'RÁDIO EXPRES', 'europa2': 'EUROPA 2', 'melody': 'RÁDIO MELODY', 'vlna': 'RÁDIO VLNA',
+        'blanik': 'RÁDIO BLANÍK', 'rock': 'ANTÉNA ROCK', 'rockrepublika': 'ROCKOVÁ REPUBLIKA', 'beat': 'RADIO BEAT', 'casrock': 'ČAS ROCK'
     };
 
     const krasnyNazov = stationNames[streamName] || streamName.toUpperCase();
-    
-    // Zapíšeme priamo formátovaný názov stanice – stabilne, rýchlo a bez chýb
-    ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
-}
+    const apiUrl = RADIO_API_URLS[streamName];
+
+    // Ak pre rádio nemáme API, zobrazíme len čistý názov stanice
+    if (!apiUrl) {
+        ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
+        return;
+    }
+
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('API nedostupné');
+        let data = await response.json();
+        
+        // Rozbalenie JSONu z CORS proxy
+        if (data.body && typeof data.body === 'string') {
+            data = JSON.parse(data.body);
+        }
+        
+        let artist = "";
+        let song = "";
+
+        // --- PARSOVANIE PODĽA TYPU RÁDIA ---
+        if (streamName.startsWith('fun')) {
+            const mapping = { 'fun': 1, 'funchill': 3, 'funczsk': 4, 'fun8090': 2, 'milenialky': 5 };
+            const targetId = mapping[streamName] || 1;
+            const track = data.find(item => item.channel_id === targetId);
+            if (track) {
+                artist = track.artist?.name || "";
+                song = track.title || "";
+            }
+        } 
+        else if (streamName === 'slovensko') {
+            if (data && data.length > 0) {
+                artist = data[0].artist || "";
+                song = data[0].title || "";
+            }
+        }
+        else if (['expres', 'europa2', 'melody', 'vlna', 'rock'].includes(streamName)) {
+            if (data && data.current) {
+                artist = data.current.artist || "";
+                song = data.current.title || "";
+            }
+        }
+        else if (streamName === 'blanik') {
+            if (data && data.data && data.data.now) {
+                artist = data.data.now.artist || "";
+                song = data.data.now.title || "";
+            }
+        }
+        else if (streamName === 'beat') {
+            if (data && data.length > 0) {
+                artist = data[0].artist || "";
+                song = data[0].title || "";
+            }
+        }
+        else if (streamName === 'casrock') {
+            if (data && data.artist && data.title) {
+                artist = data.artist || "";
+                song = data.title || "";
+            }
+        }
+
+        // --- ZOBRAZENIE VÝSLEDKU ---
+        if (artist && song) {
+            let celeInfo = `${artist.toUpperCase()} - ${song.toUpperCase()}`;
+            if (celeInfo.length > 45) celeInfo = celeInfo.substring(0, 42) + "...";
+            ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 1px;">${celeInfo}</span>`;
+        } else {
+            ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
+        }
+
+    } catch (e) {
+        console.log(`Chyba načítania songu pre ${streamName}:`, e);
+        ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
+    }
         
 async function updateNameday() {
     const now = new Date();
@@ -841,18 +936,18 @@ function playRadio(url, element, type) {
     audio.play();
     resetIdleTimer();
     
+    // Hľadaj tento blok na konci funkcie playRadio(url, element, type)
     clearInterval(songTitleInterval);
     
     const radioInfoEl = document.getElementById('ss-radio-info');
     if (radioInfoEl) {
-        // Okamžite nastavíme iba názov stanice ako čisté HTML bez piesne
         radioInfoEl.innerHTML = `${type.toUpperCase()}`;
     }
 
-    if (['fun', 'funchill', 'funczsk', 'fun8090', 'milenialky'].includes(type)) {
-        fetchCurrentSong(type); 
-        songTitleInterval = setInterval(() => fetchCurrentSong(type), 20000); 
-    }
+    // TOTO UPRAV: Spustí sa pre akékoľvek rádio, ktoré podporujeme
+    fetchCurrentSong(type); 
+    songTitleInterval = setInterval(() => fetchCurrentSong(type), 20000); 
+
     aktualizujTitulokStranky();
 }
 

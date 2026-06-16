@@ -433,7 +433,6 @@ let songTitleInterval = null;
 async function fetchCurrentSong(streamName) {
     if (currentPlayingType !== streamName) return;
 
-    // Presné ID názvy staníc podľa adresára portálu Radia.sk
     const streamMap = {
         'fun': '18_fun-radio',
         'funchill': '155_fun-radio-chill',
@@ -445,27 +444,40 @@ async function fetchCurrentSong(streamName) {
     const apiParam = streamMap[streamName];
     if (!apiParam) return;
 
-    try {
-        // Použitie verejnej allorigins proxy na obídenie CORS ochrany portálu radia.sk
-        const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://www.radia.sk/api/prave-hra/' + apiParam)}`);
-        if (!response.ok) throw new Error('Proxy alebo API nedostupné');
-        const proxyData = await response.json();
-        
-        // Allorigins balí odpoveď do stringu "contents", ktorý musíme naparsovať
-        const data = JSON.parse(proxyData.contents);
+    // Vytvoríme unikátny názov globálnej funkcie pre spracovanie dát
+    const callbackName = 'jsonp_callback_' + Math.round(Math.random() * 100000);
+    
+    // Definujeme, čo sa má stať, keď dáta dorazia (vyčistí sa to po sebe)
+    window[callbackName] = function(proxyData) {
+        try {
+            if (currentPlayingType !== streamName) return;
+            
+            // Allorigins vráti dáta v contents, naparsujeme ich
+            const data = JSON.parse(proxyData.contents);
 
-        if (currentPlayingType !== streamName) return;
-
-        if (data && data.artist && data.track) {
-            const songText = `${data.artist} - ${data.track}`;
-            const ssRadioInfoEl = document.getElementById('ss-radio-info');
-            if (ssRadioInfoEl) {
-                ssRadioInfoEl.innerHTML = `${streamName.toUpperCase()} <span style="color: #444; font-weight: 200; margin: 0 10px;">|</span> <em style="font-style: italic; font-weight: 300;">${songText}</em>`;
+            if (data && data.artist && data.track) {
+                const songText = `${data.artist} - ${data.track}`;
+                const ssRadioInfoEl = document.getElementById('ss-radio-info');
+                if (ssRadioInfoEl) {
+                    ssRadioInfoEl.innerHTML = `${streamName.toUpperCase()} <span style="color: #444; font-weight: 200; margin: 0 10px;">|</span> <em style="font-style: italic; font-weight: 300;">${songText}</em>`;
+                }
             }
+        } catch (e) {
+            console.log("Chyba parsovania skladby:", e);
+        } finally {
+            // Po dokončení upraceme globálne prostredie a odstránime pomocný script element
+            delete window[callbackName];
+            const oldScript = document.getElementById(callbackName);
+            if (oldScript) oldScript.remove();
         }
-    } catch (e) {
-        console.log("Chyba načítania skladby cez CORS proxy:", e);
-    }
+    };
+
+    // Vložíme do stránky dynamický <script> tag - toto prehliadač z princípu CORS pravidiel neblokuje
+    const script = document.createElement('script');
+    script.id = callbackName;
+    script.src = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.radia.sk/api/prave-hra/' + apiParam)}&callback=${callbackName}`;
+    
+    document.body.appendChild(script);
 }
         
 async function updateNameday() {

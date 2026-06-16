@@ -430,31 +430,24 @@ let currentPlayingType = "";
 let weatherOpenedFrom = ""; 
 let songTitleInterval = null;
         
-// Mapovanie API zdrojov pre jednotlivé stanice
 const RADIO_API_URLS = {
-    // FUN RÁDIO – upravené tak, aby išlo cez CORS proxy
-    'fun': 'https://cors-proxy.htmldriven.com/?url=https://api.funradio.sk/public/now-playing/current',
-    'funchill': 'https://cors-proxy.htmldriven.com/?url=https://api.funradio.sk/public/now-playing/current',
-    'funczsk': 'https://cors-proxy.htmldriven.com/?url=https://api.funradio.sk/public/now-playing/current',
-    'fun8090': 'https://cors-proxy.htmldriven.com/?url=https://api.funradio.sk/public/now-playing/current',
-    'milenialky': 'https://cors-proxy.htmldriven.com/?url=https://api.funradio.sk/public/now-playing/current',
+    'fun': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
+    'funchill': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
+    'funczsk': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
+    'fun8090': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
+    'milenialky': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.funradio.sk/public/now-playing/current'),
     
-    // RÁDIO SLOVENSKO
-    'slovensko': 'https://cors-proxy.htmldriven.com/?url=https://api.rtvs.sk/xml/playlist.json?channel=1',
-    // BAUER MEDIA (Expres, Europa 2, Melody)
-    'expres': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/expres/current.json',
-    'europa2': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/europa2/current.json',
-    'melody': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/melody/current.json',
-    // RÁDIO VLNA
-    'vlna': 'https://cors-proxy.htmldriven.com/?url=https://api.radiovlna.sk/playlist/current.json',
-    // RÁDIO BLANÍK
-    'blanik': 'https://cors-proxy.htmldriven.com/?url=https://api.api-mc.cz/public/v1/playlist/blanik/current',
-    // ANTÉNA ROCK
-    'rock': 'https://cors-proxy.htmldriven.com/?url=https://api.bauermedia.sk/playlist/rock/current.json',
-    // RÁDIO BEAT
-    'beat': 'https://cors-proxy.htmldriven.com/?url=https://www.radiobeat.cz/cs/sys/playlist-json.shtml',
-    // RÁDIO ČAS ROCK
-    'casrock': 'https://cors-proxy.htmldriven.com/?url=https://casrock.cz/wp-json/wp/v2/now-playing'
+    'slovensko': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.rtvs.sk/xml/playlist.json?channel=1'),
+    
+    'expres': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bauermedia.sk/playlist/expres/current.json'),
+    'europa2': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bauermedia.sk/playlist/europa2/current.json'),
+    'melody': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bauermedia.sk/playlist/melody/current.json'),
+    
+    'vlna': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.radiovlna.sk/playlist/current.json'),
+    'blanik': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.api-mc.cz/public/v1/playlist/blanik/current'),
+    'rock': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.bauermedia.sk/playlist/rock/current.json'),
+    'beat': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.radiobeat.cz/cs/sys/playlist-json.shtml'),
+    'casrock': 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://casrock.cz/wp-json/wp/v2/now-playing')
 };
 
 async function fetchCurrentSong(streamName) {
@@ -478,13 +471,12 @@ async function fetchCurrentSong(streamName) {
     }
 
     try {
-        const response = await fetch(apiUrl);
+       const response = await fetch(apiUrl);
         if (!response.ok) throw new Error('API nedostupné');
-        let data = await response.json();
+        const proxyData = await response.json();
         
-        // Rozbalenie JSONu z CORS proxy
-        if (data.body && typeof data.body === 'string') {
-            data = JSON.parse(data.body);
+        // AllOrigins vracia dáta ako string v poľe .contents, takto ich bezpečne naparsujeme na objekt
+        let data = JSON.parse(proxyData.contents);
         }
         
         let artist = "";

@@ -432,23 +432,23 @@ let songTitleInterval = null;
         
 // 1. KROK: Úplne nový objekt API adries (AllOrigins formát)
 const RADIO_API_URLS = {
-    'fun': 'https://cors.itch.ovh/https://api.funradio.sk/public/now-playing/current',
-    'funchill': 'https://cors.itch.ovh/https://api.funradio.sk/public/now-playing/current',
-    'funczsk': 'https://cors.itch.ovh/https://api.funradio.sk/public/now-playing/current',
-    'fun8090': 'https://cors.itch.ovh/https://api.funradio.sk/public/now-playing/current',
-    'milenialky': 'https://cors.itch.ovh/https://api.funradio.sk/public/now-playing/current',
+    'fun': 'https://api.funradio.sk/public/now-playing/current',
+    'funchill': 'https://api.funradio.sk/public/now-playing/current',
+    'funczsk': 'https://api.funradio.sk/public/now-playing/current',
+    'fun8090': 'https://api.funradio.sk/public/now-playing/current',
+    'milenialky': 'https://api.funradio.sk/public/now-playing/current',
     
-    'slovensko': 'https://cors.itch.ovh/https://api.rtvs.sk/xml/playlist.json?channel=1',
+    'slovensko': 'https://api.rtvs.sk/xml/playlist.json?channel=1',
     
-    'expres': 'https://cors.itch.ovh/https://api.bauermedia.sk/playlist/expres/current.json',
-    'europa2': 'https://cors.itch.ovh/https://api.bauermedia.sk/playlist/europa2/current.json',
-    'melody': 'https://cors.itch.ovh/https://api.bauermedia.sk/playlist/melody/current.json',
+    'expres': 'https://api.bauermedia.sk/playlist/expres/current.json',
+    'europa2': 'https://api.bauermedia.sk/playlist/europa2/current.json',
+    'melody': 'https://api.bauermedia.sk/playlist/melody/current.json',
     
-    'vlna': 'https://cors.itch.ovh/https://api.radiovlna.sk/playlist/current.json',
-    'blanik': 'https://cors.itch.ovh/https://api.api-mc.cz/public/v1/playlist/blanik/current',
-    'rock': 'https://cors.itch.ovh/https://api.bauermedia.sk/playlist/rock/current.json',
-    'beat': 'https://cors.itch.ovh/https://www.radiobeat.cz/cs/sys/playlist-json.shtml',
-    'casrock': 'https://cors.itch.ovh/https://casrock.cz/wp-json/wp/v2/now-playing'
+    'vlna': 'https://api.radiovlna.sk/playlist/current.json',
+    'blanik': 'https://api.api-mc.cz/public/v1/playlist/blanik/current',
+    'rock': 'https://api.bauermedia.sk/playlist/rock/current.json',
+    'beat': 'https://www.radiobeat.cz/cs/sys/playlist-json.shtml',
+    'casrock': 'https://casrock.cz/wp-json/wp/v2/now-playing'
 };
 
 // 2. KROK: Kompletne upravená funkcia na parsovanie dát z novej proxy
@@ -474,7 +474,7 @@ async function fetchCurrentSong(streamName) {
     try {
         const response = await fetch(apiUrl);
         if (!response.ok) throw new Error('API nedostupné');
-        let data = await response.json(); // Načítame priamy JSON bez akéhokoľvek rozbaľovania stringov
+        let data = await response.json();
         
         let artist = "";
         let song = "";

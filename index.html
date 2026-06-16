@@ -457,78 +457,30 @@ async function fetchCurrentSong(streamName) {
     if (!ssRadioInfoEl) return;
 
     const stationNames = {
-        'slovensko': 'RÁDIO SLOVENSKO', 'fm': 'RÁDIO _FM', 'devin': 'RÁDIO DEVÍN', 'litera': 'RÁDIO LITERA', 'regina': 'RÁDIO REGINA',
-        'fun': 'FUN RÁDIO LIVE', 'funchill': 'FUN CHILL', 'funczsk': 'FUN CZ-SK', 'fun8090': 'FUN 80-90', 'milenialky': 'FUN MILENIÁLKY',
-        'expres': 'RÁDIO EXPRES', 'europa2': 'EUROPA 2', 'melody': 'RÁDIO MELODY', 'vlna': 'RÁDIO VLNA',
-        'blanik': 'RÁDIO BLANÍK', 'rock': 'ANTÉNA ROCK', 'rockrepublika': 'ROCKOVÁ REPUBLIKA', 'beat': 'RADIO BEAT', 'casrock': 'ČAS ROCK'
+        'slovensko': 'RÁDIO SLOVENSKO', 'fun': 'FUN RÁDIO LIVE', 'funchill': 'FUN CHILL', 
+        'funczsk': 'FUN CZ-SK', 'fun8090': 'FUN 80-90', 'milenialky': 'FUN MILENIÁLKY',
+        'expres': 'RÁDIO EXPRES', 'europa2': 'EUROPA 2', 'melody': 'RÁDIO MELODY', 'vlna': 'RÁDIO VLNA'
     };
 
     const krasnyNazov = stationNames[streamName] || streamName.toUpperCase();
-    const apiUrl = RADIO_API_URLS[streamName];
-
-    if (!apiUrl) {
-        ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
-        return;
-    }
 
     try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('API nedostupné');
-        let data = await response.json();
-        
-        let artist = "";
-        let song = "";
+        // Ťaháme dáta priamo z tvojho vlastného GitHub Pages webu! Žiadny CORS problém, žiadny blokovaný web rádia.
+        const response = await fetch('./song.json?t=' + new Date().getTime());
+        if (!response.ok) throw new Error('Súbor s pesničkami zatiaľ neexistuje');
+        const data = await response.json();
 
-                // --- PARSOVANIE PODĽA TYPU RÁDIA ---
-        if (streamName.startsWith('fun')) {
-            // Nové API vracia priamo objekt, kde je "artist" a "title"
-            if (data) {
-                artist = data.artist || "";
-                song = data.title || "";
-            }
-        } 
-        else if (streamName === 'slovensko') {
-            if (data && data.length > 0) {
-                artist = data[0].artist || "";
-                song = data[0].title || "";
-            }
-        }
-        else if (['expres', 'europa2', 'melody', 'vlna', 'rock'].includes(streamName)) {
-            if (data && data.current) {
-                artist = data.current.artist || "";
-                song = data.current.title || "";
-            }
-        }
-        else if (streamName === 'blanik') {
-            if (data && data.data && data.data.now) {
-                artist = data.data.now.artist || "";
-                song = data.data.now.title || "";
-            }
-        }
-        else if (streamName === 'beat') {
-            if (data && data.length > 0) {
-                artist = data[0].artist || "";
-                song = data[0].title || "";
-            }
-        }
-        else if (streamName === 'casrock') {
-            if (data && data.artist && data.title) {
-                artist = data.artist || "";
-                song = data.title || "";
-            }
-        }
+        // Vytiahneme pesničku pre práve hrajúce rádio
+        const track = data[streamName];
 
-        // --- ZOBRAZENIE VÝSLEDKU ---
-        if (artist && song) {
-            let celeInfo = `${artist.toUpperCase()} - ${song.toUpperCase()}`;
+        if (track && track.artist && track.title) {
+            let celeInfo = `${track.artist.toUpperCase()} - ${track.title.toUpperCase()}`;
             if (celeInfo.length > 45) celeInfo = celeInfo.substring(0, 42) + "...";
             ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 1px;">${celeInfo}</span>`;
         } else {
             ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
         }
-
     } catch (e) {
-        console.log(`Chyba načítania songu pre ${streamName}:`, e);
         ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
     }
 }

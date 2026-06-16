@@ -432,18 +432,18 @@ let songTitleInterval = null;
         
 // 1. KROK: Úplne nový objekt API adries (AllOrigins formát)
 const RADIO_API_URLS = {
-    'fun': 'https://api.funradio.sk/public/now-playing/current',
-    'funchill': 'https://api.funradio.sk/public/now-playing/current',
-    'funczsk': 'https://api.funradio.sk/public/now-playing/current',
-    'fun8090': 'https://api.funradio.sk/public/now-playing/current',
-    'milenialky': 'https://api.funradio.sk/public/now-playing/current',
+    // FUN RÁDIO – Nové, plne funkčné API (v mobile aj s pluginom v Edge)
+    'fun': 'https://r6.funradio.sk/api/v1/now-playing/fun',
+    'funchill': 'https://r6.funradio.sk/api/v1/now-playing/chill',
+    'funczsk': 'https://r6.funradio.sk/api/v1/now-playing/cs',
+    'fun8090': 'https://r6.funradio.sk/api/v1/now-playing/80-90',
+    'milenialky': 'https://r6.funradio.sk/api/v1/now-playing/milenialky',
     
+    // Ostatné rádiá (priame linky)
     'slovensko': 'https://api.rtvs.sk/xml/playlist.json?channel=1',
-    
     'expres': 'https://api.bauermedia.sk/playlist/expres/current.json',
     'europa2': 'https://api.bauermedia.sk/playlist/europa2/current.json',
     'melody': 'https://api.bauermedia.sk/playlist/melody/current.json',
-    
     'vlna': 'https://api.radiovlna.sk/playlist/current.json',
     'blanik': 'https://api.api-mc.cz/public/v1/playlist/blanik/current',
     'rock': 'https://api.bauermedia.sk/playlist/rock/current.json',
@@ -479,15 +479,12 @@ async function fetchCurrentSong(streamName) {
         let artist = "";
         let song = "";
 
-        // --- PARSOVANIE PODĽA TYPU RÁDIA ---
+                // --- PARSOVANIE PODĽA TYPU RÁDIA ---
         if (streamName.startsWith('fun')) {
-
-            const mapping = { 'fun': 1, 'funchill': 3, 'funczsk': 4, 'fun8090': 2, 'milenialky': 5 };
-            const targetId = mapping[streamName] || 1;
-            const track = data.find(item => item.channel_id === targetId);
-            if (track) {
-                artist = track.artist?.name || "";
-                song = track.title || "";
+            // Nové API vracia priamo objekt, kde je "artist" a "title"
+            if (data) {
+                artist = data.artist || "";
+                song = data.title || "";
             }
         } 
         else if (streamName === 'slovensko') {

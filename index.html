@@ -484,7 +484,6 @@ async function fetchCurrentSong(streamName) {
         // Rozbalenie JSONu z CORS proxy
         if (data.body && typeof data.body === 'string') {
             data = JSON.parse(data.body);
-            }
         }
         
         let artist = "";
@@ -544,6 +543,7 @@ async function fetchCurrentSong(streamName) {
         console.log(`Chyba načítania songu pre ${streamName}:`, e);
         ssRadioInfoEl.innerHTML = `<span style="font-weight: 500; color: #ff9f0a; letter-spacing: 2px;">${krasnyNazov}</span>`;
     }
+}
         
 async function updateNameday() {
     const now = new Date();

@@ -835,8 +835,18 @@ function prepniDenGrafu(e, dayIndex) {
 // --- AUDIO LOGIKA ---
 const audio = document.getElementById('audioPlayer');
 
+// Nové premenné pre zapamätanie posledného hraného rádia
+let lastRadioUrl = "";
+let lastRadioElement = null;
+let lastRadioType = "";
+
 function playRadio(url, element, type) {
-    currentPlayingType = type; 
+    // Uložíme si aktuálne rádio do pamäte pre prípadné opätovné zapnutie
+    lastRadioUrl = url;
+    lastRadioElement = element;
+    lastRadioType = type;
+
+    currentPlayingType = type;
     
     const spotifyContainer = document.getElementById('integrated-spotify-container');
     const spotifyFrame = document.getElementById('spotify-player-frame');
@@ -909,8 +919,11 @@ function aktualizujSubPanely(type) {
 }
     
 function stopRadio() {
-    audio.pause(); audio.src = "";
-    currentPlayingType = ""; 
+    // AK RÁDIO PRÁVE HRÁ (alebo hrá Spotify): zastavíme ho
+    if (currentPlayingType !== "") {
+        audio.pause(); 
+        audio.src = "";
+        currentPlayingType = "";
     
     // Zastavenie intervalu piesne
     clearInterval(songTitleInterval);
@@ -934,7 +947,12 @@ function stopRadio() {
     if (radioInfoEl) radioInfoEl.textContent = "";
     aktualizujTitulokStranky();
 }
-    
+    // AK RÁDIO NEHRÁ: skontrolujeme, či máme v pamäti predchádzajúce rádio a znova ho zapneme
+    else if (lastRadioUrl !== "") {
+        playRadio(lastRadioUrl, lastRadioElement, lastRadioType);
+    }
+}
+        
 function showSpotify() {
     // Vypne bežné rádio, no neodstráni vizuálny panel
     audio.pause(); audio.src = "";

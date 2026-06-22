@@ -278,7 +278,7 @@
         </div>
         
         <div class="ss-right-col">
-            <div id="ss-radio-info" class="weather-details-hide" onpointerdown="event.stopPropagation(); if(event.cancelable) event.preventDefault(); stopRadio();" style="pointer-events: auto !important; cursor: pointer;"></div>
+            <div id="ss-radio-info" class="weather-details-hide" onpointerdown="event.stopPropagation(); event.preventDefault(); stopRadio();" style="pointer-events: auto !important; cursor: pointer; z-index: 9999 !important;"></div>
             
             <div id="time" class="weather-details-hide">
                 <span id="h-part" class="hours-part">00</span>

@@ -897,7 +897,7 @@ function showSpotify() {
     const spotifyBtn = document.querySelector('.spotify');
     if (spotifyBtn) spotifyBtn.classList.add('playing');
     
-    resetIdleTimer();
+    resetIdleTimer(!document.body.classList.contains('screensaver-mode'));
     aktualizujTitulokStranky();
 }
 
@@ -958,7 +958,7 @@ document.addEventListener('touchstart', function(e) {
     if (e.target.closest('#time') || e.target.closest('#ss-weather-trigger') || e.target.closest('#weather-details-top-inline') || e.target.closest('#extended-forecast-container')) {
         return; 
     }
-    resetIdleTimer();
+    resetIdleTimer(!document.body.classList.contains('screensaver-mode'));
 }, { passive: true });
 
 function klikNaHodiny(e) {

@@ -546,8 +546,11 @@ function aktualizujTitulokStranky() {
             radioText = window.customCityName.toUpperCase();
         }
     }
-// UPRAVENÝ RIADOK: Na koniec pridáme medzeru a stiahnutú skladbu
-    document.title = `${weatherEmoji} ${tempText} | ${radioText} ${window.currentSongTitle}`;
+    // PRIDANÁ LOGIKA: Ak premenná obsahuje pesničku, pridáme ju za názov rádia s pomlčkou
+    let songText = window.currentSongTitle ? ` - ${window.currentSongTitle}` : "";
+
+    // Finálne zostavenie titulku
+    document.title = `${weatherEmoji} ${tempText} | ${radioText}${songText}`;
 }
 function updateClock() {
     const now = new Date();

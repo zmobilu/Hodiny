@@ -467,7 +467,56 @@ async function updateNameday() {
         dnesneMeno = ""; 
     }
 }
+        
+    // Globálna premenná pre aktuálne stiahnutú skladbu
+    window.currentSongTitle = "";
 
+    async function aktualizujAktualnuSkladbuSTVR() {
+        // Mapa rádií na čísla kanálov z STVR API
+        const stvrChannels = {
+        'slovensko': 1,
+        'fm': 2,
+        'devin': 3,
+        'regina': 4,
+        'litera': 8
+    };
+
+    // Ak nehrá žiadne rádio zo zoznamu STVR, vymažeme názov skladby a skončíme
+    const aktualnyKanal = stvrChannels[currentPlayingType];
+    if (!aktualnyKanal) {
+        window.currentSongTitle = "";
+        return;
+    }
+
+    try {
+        // Použijeme presnú overenú adresu, číslo kanálu sa mení dynamicky podľa hrajúceho rádia
+        const response = await fetch(`https://fm.stvr.sk/json/snippet/radio_playlist.json?channel=${aktualnyKanal}`);
+        if (!response.ok) throw new Error('Chyba API');
+        
+        const data = await response.json();
+        
+        // Vytiahneme nultý (najnovší) záznam z playlistu
+        if (data && data["0"]) {
+            const interpret = data["0"].interpret || "";
+            const title = data["0"].title || "";
+            
+            if (interpret && title) {
+                window.currentSongTitle = `🎵 ${interpret} - ${title}`;
+            } else if (title) {
+                window.currentSongTitle = `🎵 ${title}`;
+            } else {
+                window.currentSongTitle = "";
+            }
+        }
+    } catch (error) {
+        console.log("Nemám prístup k STVR API (CORS):", error);
+        window.currentSongTitle = "";
+    }
+}
+
+// Spúšťame kontrolu pesničky každých 20 sekúnd na pozadí
+setInterval(aktualizujAktualnuSkladbuSTVR, 20000);
+                
 function aktualizujTitulokStranky() {
     const tempText = document.getElementById('weather-temp-mini').textContent || '--°C';
     // Vyčistíme ikonku počasia podľa kódu, ak ho máme, alebo dáme univerzálne meteo emoji
@@ -493,8 +542,8 @@ function aktualizujTitulokStranky() {
             radioText = window.customCityName.toUpperCase();
         }
     }
-
-    document.title = `${weatherEmoji} ${tempText} | ${radioText}`;
+// UPRAVENÝ RIADOK: Na koniec pridáme medzeru a stiahnutú skladbu
+    document.title = `${weatherEmoji} ${tempText} | ${radioText} ${window.currentSongTitle}`;
 }
 function updateClock() {
     const now = new Date();
@@ -881,6 +930,8 @@ const audio = document.getElementById('audioPlayer');
     radioInfoEl.innerHTML = `${type.toUpperCase()} <i class="fa-solid fa-power-off" style="color: #eb0028; font-size: 0.8em; margin-left: 12px;"></i>`;
 }
     aktualizujTitulokStranky();
+    // PRIDANÉ: Okamžite po prepnutí skús stiahnuť info o pesničke
+    aktualizujAktualnuSkladbuSTVR();
 }
 
 function aktualizujSubPanely(type) {
@@ -1227,20 +1278,6 @@ if (ua.includes('iPhone') && ua.includes('OS 16_')) {
     if (searchRow) {
         searchRow.style.setProperty('display', 'none', 'important');
     }
-    // TEST NAČÍTANIA SKLADBY PRIAMO Z API
-async function testNačitaniaSkladby() {
-    try {
-        const response = await fetch('https://fm.stvr.sk/json/snippet/radio_playlist.json?channel=2');
-        if (!response.ok) throw new Error('Chyba servera');
-        const data = await response.json();
-        console.log("ÚSPECH! Dáta z rozhlasu:", data);
-    } catch (error) {
-        console.error("CORS ochrana nás zablokovala. Detaily:", error);
-    }
-}
-
-// Spustíme test po načítaní stránky
-setTimeout(testNačitaniaSkladby, 2000);
 }
 
 updateNameday();

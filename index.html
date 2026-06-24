@@ -239,11 +239,6 @@ body.full-night-mode #ss-radio-info,
 body.full-night-mode .radio-info-wrapper,
 body.full-night-mode #integrated-spotify-container,
 body.full-night-mode #settings-container { display: none !important; }
-/* Ak sú otvorené nastavenia, skryjeme hodiny a info riadok, aby uvoľnili miesto navrchu */
-body:has(#settings-container[style*="display: block"]) #time,
-body:has(#settings-container[style*="display: block"]) .radio-info-wrapper { 
-    display: none !important; 
-}
 body.full-night-mode [id$="-links-container"], /* TENTO RIADOK skryje všetky sub-tlačidlá rádií */
 body.full-night-mode #date-block {
     display: none !important;
@@ -423,11 +418,11 @@ body.full-night-mode #night-bottom-info {
             </div>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: #111; padding: 15px; border-radius: 12px; border: 1px solid #222;">
-            <span style="font-size: 2.5vw; color: #fff;"><i class="fa-solid fa-hourglass-half" style="color: #ff9f0a; margin-right: 10px;"></i> Doba zobrazenia po prebudení</span>
+            <span style="font-size: 2.5vw; color: #fff;"><i class="fa-solid fa-hourglass-half" style="color: #ff9f0a; margin-right: 10px;"></i> Prerušenie</span>
             <button onclick="zmenDobuOdkladu()" id="set-snooze-time" style="background: #222; color: #fff; border: 1px solid #444; padding: 8px 15px; border-radius: 8px; font-size: 2vw; cursor: pointer;">1 min</button>
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; background: #111; padding: 15px; border-radius: 12px; border: 1px solid #222;">
-            <span style="font-size: 2.5vw; color: #fff;"><i class="fa-solid fa-palette" style="color: #eb0028; margin-right: 10px;"></i> Farba hodín v nočnom režime</span>
+            <span style="font-size: 2.5vw; color: #fff;"><i class="fa-solid fa-palette" style="color: #eb0028; margin-right: 10px;"></i> Farba</span>
             <div style="display: flex; gap: 8px;">
                 <div onclick="nastavFarbuNoci('#ffff00', this)" class="color-picker-dot" style="background: #ffff00; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;"></div>
                 <div onclick="nastavFarbuNoci('#eb0028', this)" class="color-picker-dot" style="background: #eb0028; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 2px solid transparent;"></div>
@@ -748,8 +743,11 @@ function updateClock() {
         ? (aktualnyCasVKutoch >= casOd || aktualnyCasVKutoch < casDo)
         : (aktualnyCasVKutoch >= casOd && aktualnyCasVKutoch < casDo);
 
-    if (jeNocnyCas && terazMili > nocnyRezimSnoozeDo) {
-        bodyEl.classList.add('full-night-mode');
+    const settingsBox = document.getElementById('settings-container');
+    const nastaveniaSuOtvorene = settingsBox && settingsBox.style.display === 'block';
+
+    if (jeNocnyCas && terazMili > nocnyRezimSnoozeDo && !nastaveniaSuOtvorene) {
+    bodyEl.classList.add('full-night-mode');
         
         const dniVTyzdniSvk = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
         const mesiaceSvk = ['január', 'február', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december'];

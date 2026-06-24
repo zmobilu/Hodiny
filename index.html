@@ -1092,8 +1092,10 @@ const audio = document.getElementById('audioPlayer');
 
         
     function playRadio(url, element, type) {
-        if(document.getElementById('settings-container')) document.getElementById('settings-container').style.display = 'none';
-        // Pridané pre localStorage:
+    if(document.getElementById('settings-container')) document.getElementById('settings-container').style.display = 'none';
+    if(document.getElementById('time')) document.getElementById('time').style.display = 'flex';
+    if(document.querySelector('.radio-info-wrapper')) document.querySelector('.radio-info-wrapper').style.display = 'flex';
+    
         localStorage.setItem('kiosk_last_radio_url', url);
         localStorage.setItem('kiosk_last_radio_type', type);
         
@@ -1216,7 +1218,10 @@ function stopRadio() {
     
 function showSpotify() {
     if(document.getElementById('settings-container')) document.getElementById('settings-container').style.display = 'none';
-    // Vypne bežné rádio, no neodstráni vizuálny panel
+    if(document.getElementById('time')) document.getElementById('time').style.display = 'flex';
+    if(document.querySelector('.radio-info-wrapper')) document.querySelector('.radio-info-wrapper').style.display = 'flex';
+    if(document.getElementById('spotify-links-container')) document.getElementById('spotify-links-container').style.display = 'flex';
+    
     audio.pause(); audio.src = "";
  
     // Zatvoríme otvorený iframe ak predtým existoval

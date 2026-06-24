@@ -229,7 +229,11 @@
             white-space: nowrap !important;
             line-height: 1.0 !important;
         }
-        /* --- CELOOBRAZOVKOVÝ NOČNÝ REŽIM (IBA ŽLTÉ HODINY) --- */
+       /* --- CELOOBRAZOVKOVÝ NOČNÝ REŽIM (CENTRÁLNE RIADENÁ FARBA) --- */
+:root {
+    --night-color: #ffff00; /* !!! TU NASTAVUJEŠ FARBU PRE CELÚ NOC (teraz Žltá) !!! */
+}
+
 body.full-night-mode .buttons-section,
 body.full-night-mode .ss-left-col,
 body.full-night-mode #ss-radio-info,
@@ -245,23 +249,44 @@ body.full-night-mode .clock-section {
     border: none !important;
     background-color: #000 !important;
     display: flex !important;
+    flex-direction: column !important; /* Prvky pod sebou */
     justify-content: center !important;
     align-items: center !important;
+    position: relative !important;
 }
 
 body.full-night-mode #time {
-    font-size: 35vw !important; /* Ešte o niečo väčšie, keďže sú na obrazovke samé */
+    font-size: 35vw !important;
     transform: scaleY(1.20) !important;
-    letter-spacing: -1vw !important;
+    letter-spacing: -0.5vw !important; /* Jemne upravené pre verziu bez dvojbodky */
     margin: 0 !important;
     padding: 0 !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    gap: 0 !important; /* Čas bez dvojbodky a medzery */
 }
 
+/* Použitie centrálnej farby pre všetky časti hodín */
 body.full-night-mode .hours-part,
 body.full-night-mode .minutes-part,
 body.full-night-mode .red-digit,
 body.full-night-mode .blue-digit {
-    color: #ffff00 !important; /* Vynútená žltá pre všetky číslice */
+    color: var(--night-color) !important;
+}
+
+/* Štýl pre nový spodný informačný riadok */
+body.full-night-mode #night-bottom-info {
+    display: block !important;
+    position: absolute !important;
+    bottom: 6vh !important; /* Umiestnenie pri spodnom okraji */
+    font-size: 3.2vw !important;
+    font-weight: 300 !important;
+    letter-spacing: 1px !important;
+    color: var(--night-color) !important; /* Rovnaká farba ako čas */
+    opacity: 0.85 !important;
+    text-transform: none !important; /* Text zostane prirodzený */
+    font-family: inherit !important;
+    text-align: center !important;
 }
          
     </style>
@@ -319,6 +344,8 @@ body.full-night-mode .blue-digit {
                 <span id="h-part" class="hours-part">00</span>
                 <span id="m-part" class="minutes-part">00</span> 
             </div>
+            <!-- PRIDANÉ: Spodný riadok pre nočný režim -->
+            <div id="night-bottom-info" style="display: none;"></div>
             
             <div id="weather-details-top-inline" class="weather-details-only" style="display: none; flex-direction: column; width: 100%; height: 68vh; padding: 10px 10px 0 10px; box-sizing: border-box; justify-content: space-between;">
                 <div id="weather-search-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; height: 5vh; gap: 10px;">
@@ -583,7 +610,6 @@ function aktualizujTitulokStranky() {
     // Finálne zostavenie titulku - čisté, iba Počasie | Rádio/Mesto
     document.title = `${weatherEmoji} ${tempText} | ${radioText}`;
 }
-// Nová premenná pre dočasné zrušenie režimu kliknutím (umiestni ju tesne nad updateClock)
 let nocnyRezimSnoozeDo = 0;
 
 function updateClock() {
@@ -591,19 +617,34 @@ function updateClock() {
     let h = String(now.getHours()).padStart(2, '0');
     let m = String(now.getMinutes()).padStart(2, '0');
 
-    // Prevod aktuálneho času na minúty
     const aktualnyCasVKutoch = now.getHours() * 60 + now.getMinutes();
     const terazMili = Date.now();
 
-    // --- TESTOVACÍ ČAS s opravou na SÚČASNE (&&) ---
-    const casOd = 14 * 60;      // 14:00
-    const casDo = 14 * 60 + 20; // 14:20
+    // --- TESTOVACÍ ČAS (Zatiaľ ponechaný 10:00 - 11:20 pre tvoj notebook) ---
+    const casOd = 14 * 60;      
+    const casDo = 15 * 60 + 20; 
 
     const bodyEl = document.getElementById('mainBody');
+    const bottomInfoEl = document.getElementById('night-bottom-info');
     
-    // Podmienka platí len vtedy, ak sme v intervale A ZÁROVEŇ nevypršal 5-minútový snooze klik
     if (aktualnyCasVKutoch >= casOd && aktualnyCasVKutoch < casDo && terazMili > nocnyRezimSnoozeDo) {
         bodyEl.classList.add('full-night-mode');
+        
+        // Generovanie slovenského nočného riadku
+        const dniVTyzdniSvk = ['Nedeľa', 'Pondelok', 'Utorok', 'Streda', 'Štvrtok', 'Piatok', 'Sobota'];
+        const mesiaceSvk = ['január', 'február', 'marec', 'apríl', 'máj', 'jún', 'júl', 'august', 'september', 'október', 'november', 'december'];
+        
+        const denSlovom = dniVTyzdniSvk[now.getDay()];
+        const mesiacSlovom = mesiaceSvk[now.getMonth()];
+        const denCislom = now.getDate();
+        
+        // Vytiahnutie teploty z mini elementu (kde je už stiahnutá a zaokrúhlená)
+        const aktualnaTeplota = document.getElementById('weather-temp-mini').textContent || '--°C';
+        
+        // Výsledný formát: "Pondelok, 23. júna • 24°C"
+        if (bottomInfoEl) {
+            bottomInfoEl.innerHTML = `${denSlovom}, ${denCislom}. ${mesiacSlovom} &nbsp;•&nbsp; ${aktualnaTeplota}`;
+        }
     } else {
         bodyEl.classList.remove('full-night-mode');
     }

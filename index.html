@@ -39,13 +39,9 @@
         #time { font-size: 24vw; line-height: 0.8; letter-spacing: -4px; display: flex; align-items: baseline; 
                   transform: scaleY(1.05); transform-origin: center; cursor: pointer; }
         .hours-part { font-weight: 600; color: #FFFfff; } 
-        .minutes-part { font-weight: 200; color: #FFFfff; margin-left: 1px; }    /* --- <span class="colon-part">:</span> --- */
+        .minutes-part { font-weight: 200; color: #FFFfff; margin-left: 1px; }
         .red-digit { color: #eb0028 !important; } 
         .blue-digit { color: #307CEB !important; }
-        
-        /* Nový štýl pre blikajúcu dvojbodku */
-        .colon-part { font-weight: 100; color: #6BF242; margin-left: 1px; animation: blinker 1s linear infinite; }
-        @keyframes blinker { 50% { opacity: 0; } }
         
         /* Štýl pre info riadok v rádio režime */
         .radio-info-wrapper { display: flex;  align-items: center;  gap: 12px; margin-top: 10px;  font-size: 3.5vw; font-weight: 300; color: #aaa;}
@@ -524,9 +520,10 @@ async function updateNameday() {
 // Spúšťame kontrolu pesničky každých 20 sekúnd na pozadí
 setInterval(aktualizujAktualnuSkladbuSTVR, 20000);
                 
+fun// Globálna premenná pre skladbu a jej sťahovanie boli kompletne odstránené
+
 function aktualizujTitulokStranky() {
     const tempText = document.getElementById('weather-temp-mini').textContent || '--°C';
-    // Vyčistíme ikonku počasia podľa kódu, ak ho máme, alebo dáme univerzálne meteo emoji
     let weatherEmoji = "🌤️"; 
     if (weatherDataBackup && weatherDataBackup.current) {
         const code = weatherDataBackup.current.weather_code;
@@ -541,19 +538,17 @@ function aktualizujTitulokStranky() {
     if (currentPlayingType !== "" && currentPlayingType !== "none") {
         radioText = "🔊" + currentPlayingType.toUpperCase();
     } else {
-        // AK RÁDIO NEHRÁ: Zistíme názov mesta z elementu na stránke
         const cityEl = document.getElementById('weather-location-main');
         if (cityEl && cityEl.textContent && cityEl.textContent !== "---") {
-            radioText = cityEl.textContent; // Dosadí napr. "BRATISLAVA"
+            // Vytiahneme čistý text mesta bez HTML tagov mapy
+            radioText = cityEl.innerText || cityEl.textContent; 
         } else if (window.customCityName) {
             radioText = window.customCityName.toUpperCase();
         }
     }
-    // PRIDANÁ LOGIKA: Ak premenná obsahuje pesničku, pridáme ju za názov rádia s pomlčkou
-    let songText = window.currentSongTitle ? ` - ${window.currentSongTitle}` : "";
 
-    // Finálne zostavenie titulku
-    document.title = `${weatherEmoji} ${tempText} | ${radioText}${songText}`;
+    // Finálne zostavenie titulku - čisté, iba Počasie | Rádio/Mesto
+    document.title = `${weatherEmoji} ${tempText} | ${radioText}`;
 }
 function updateClock() {
     const now = new Date();
@@ -880,6 +875,7 @@ const audio = document.getElementById('audioPlayer');
     let lastRadioElement = null;
     let lastRadioType = "";
 
+        
     function playRadio(url, element, type) {
         // Pridané pre localStorage:
         localStorage.setItem('kiosk_last_radio_url', url);
@@ -940,8 +936,6 @@ const audio = document.getElementById('audioPlayer');
     radioInfoEl.innerHTML = `${type.toUpperCase()} <i class="fa-solid fa-power-off" style="color: #eb0028; font-size: 0.8em; margin-left: 12px;"></i>`;
 }
     aktualizujTitulokStranky();
-    // PRIDANÉ: Okamžite po prepnutí skús stiahnuť info o pesničke
-    aktualizujAktualnuSkladbuSTVR();
 }
 
 function aktualizujSubPanely(type) {
